@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Kontrol menu pause: dibuka/tutup dengan tombol ESC (New Input System),
-/// mengatur Time.timeScale, dan menyediakan method untuk tombol Resume & Quit.
+/// mengatur Time.timeScale, dan menyediakan method untuk tombol Resume, Back to Menu & Quit.
 /// </summary>
 public class PauseManager : MonoBehaviour
 {
@@ -17,7 +18,12 @@ public class PauseManager : MonoBehaviour
     [Tooltip("Drag Input Action 'Pause' yang sudah di-bind ke tombol ESC di sini")]
     [SerializeField] private InputActionReference pauseAction;
 
+    [Header("Back to Menu Settings")]
+    [Tooltip("Nama scene MainMenu yang akan di-load saat tombol Back to Menu ditekan.")]
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
+
     private bool isPaused;
+    private bool isReturningToMenu; // guard supaya tombol tidak bisa dipencet dobel saat sedang loading
 
     public bool IsPaused => isPaused;
 
@@ -62,6 +68,8 @@ public class PauseManager : MonoBehaviour
 
     private void OnPausePerformed(InputAction.CallbackContext ctx)
     {
+        // Jangan biarkan ESC toggle pause lagi kalau lagi proses pindah ke menu
+        if (isReturningToMenu) return;
         TogglePause();
     }
 
@@ -90,6 +98,32 @@ public class PauseManager : MonoBehaviour
             pausePanel.SetActive(false);
 
         Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// Panggil dari OnClick tombol "Back to Menu" di Inspector.
+    /// Alurnya sama seperti loading MainMenu -> Gameplay: pausePanel fade out sambil
+    /// loading screen fade in, load scene MainMenu, lalu fade out lagi.
+    /// </summary>
+    public void BackToMenu()
+    {
+        if (isReturningToMenu) return;
+        isReturningToMenu = true;
+
+        // PENTING: reset timeScale dulu SEBELUM load scene baru.
+        // Kalau tidak, scene MainMenu yang baru dimuat ikut "freeze" karena
+        // timeScale masih 0 peninggalan dari pause.
+        Time.timeScale = 1f;
+
+        CanvasGroup pauseCanvasGroup = pausePanel != null
+            ? pausePanel.GetComponent<CanvasGroup>()
+            : null;
+
+        // mode Single -> scene Gameplay otomatis diganti, tidak perlu unload manual.
+        LoadingScreenController.Instance.LoadScene(
+            mainMenuSceneName,
+            LoadSceneMode.Single,
+            pauseCanvasGroup);
     }
 
     /// <summary>

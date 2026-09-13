@@ -1,0 +1,65 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+/// <summary>
+/// Mengatur MainMenu: klik Play -> PanelMainMenu fade out sambil loading screen (persistent,
+/// lihat LoadingScreenController) fade in -> load scene Gameplay -> setelah siap, loading
+/// screen fade out -> delay sekian detik -> scene MainMenu ini di-unload.
+///
+/// SETUP DI INSPECTOR:
+/// - PanelMainMenu butuh komponen CanvasGroup (Add Component > Canvas Group).
+/// - Pastikan ada 1 instance LoadingScreenController di scene ini (atau scene Bootstrap)
+///   sebelum tombol Play ditekan.
+/// - OnClick() Button "ButtonPlayContinueGame" -> OnPlayClicked().
+/// - OnClick() Button "ButtonExit" -> OnExitClicked().
+/// </summary>
+public class MainMenuManager : MonoBehaviour
+{
+    [Header("References")]
+    [SerializeField] private CanvasGroup panelMainMenu;
+
+    [Header("Scene Settings")]
+    [Tooltip("Nama scene Gameplay yang akan di-load (harus sudah masuk Build Settings).")]
+    [SerializeField] private string gameplaySceneName = "Gameplay";
+    [Tooltip("Aktifkan jika MainMenu di-load bareng Gameplay secara additive, lalu MainMenu " +
+             "akan di-unload manual setelah loading selesai. Kalau dimatikan, scene akan " +
+             "diganti langsung (Single) tanpa perlu unload manual.")]
+    [SerializeField] private bool loadAdditive = true;
+    [Tooltip("Jeda (detik) setelah loading screen fade out selesai, sebelum scene MainMenu di-unload.")]
+    [SerializeField] private float delayBeforeUnloadMainMenu = 2f;
+
+    private void Awake()
+    {
+        panelMainMenu.alpha = 1f;
+        panelMainMenu.interactable = true;
+        panelMainMenu.blocksRaycasts = true;
+    }
+
+    /// <summary>
+    /// Assign method ini ke Button "ButtonPlayContinueGame" -> OnClick() di Inspector.
+    /// </summary>
+    public void OnPlayClicked()
+    {
+        LoadSceneMode mode = loadAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single;
+        Scene? sceneToUnload = loadAdditive ? gameObject.scene : (Scene?)null;
+
+        LoadingScreenController.Instance.LoadScene(
+            gameplaySceneName,
+            mode,
+            panelMainMenu,
+            sceneToUnload,
+            delayBeforeUnloadMainMenu);
+    }
+
+    /// <summary>
+    /// Assign method ini ke Button "ButtonExit" -> OnClick() di Inspector.
+    /// </summary>
+    public void OnExitClicked()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+}
