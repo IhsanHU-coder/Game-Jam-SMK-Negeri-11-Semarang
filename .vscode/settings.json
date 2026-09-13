@@ -66,5 +66,9 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj",
     },
-    "dotnet.defaultSolution": "Game-Jam-SMK-Negeri-11-Semarang.sln"
+    "dotnet.defaultSolution": "Game-Jam-SMK-Negeri-11-Semarang.sln",
+    "csharp-dev-tools.solutionViewer.selectedWorkspaceSolutions": [
+        "Game Jam SMK Negeri 11 Semarang.sln",
+        "Game-Jam-SMK-Negeri-11-Semarang.sln"
+    ]
 }
