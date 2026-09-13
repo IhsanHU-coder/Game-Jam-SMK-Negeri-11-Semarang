@@ -14,6 +14,9 @@ public class PauseManager : MonoBehaviour
     [Tooltip("Panel UI Settings/Pause yang mau ditampilkan/disembunyikan")]
     [SerializeField] private GameObject pausePanel;
 
+    [Tooltip("Drag InputManager player di scene ke sini")]
+    [SerializeField] private InputManager inputManager;
+
     [Header("Input (New Input System)")]
     [Tooltip("Drag Input Action 'Pause' yang sudah di-bind ke tombol ESC di sini")]
     [SerializeField] private InputActionReference pauseAction;
@@ -80,13 +83,23 @@ public class PauseManager : MonoBehaviour
     }
 
     public void PauseGame()
-    {
-        isPaused = true;
-        if (pausePanel != null)
-            pausePanel.SetActive(true);
+{
+    isPaused = true;
+    if (pausePanel != null)
+        pausePanel.SetActive(true);
 
-        Time.timeScale = 0f;
+    Time.timeScale = 0f;
+
+    if (inputManager != null)
+    {
+        Debug.Log("Disabling player input...");
+        inputManager.DisablePlayerInput();
     }
+    else
+    {
+        Debug.LogWarning("inputManager is NULL! Assign it in Inspector.");
+    }
+}
 
     /// <summary>
     /// Panggil dari OnClick tombol "Resume" di Inspector.
@@ -98,6 +111,10 @@ public class PauseManager : MonoBehaviour
             pausePanel.SetActive(false);
 
         Time.timeScale = 1f;
+
+        // Nyalakan lagi input gameplay
+        if (inputManager != null)
+            inputManager.EnablePlayerInput();
     }
 
     /// <summary>

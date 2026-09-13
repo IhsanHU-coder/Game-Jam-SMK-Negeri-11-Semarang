@@ -30,6 +30,13 @@ public class PlayerAttack : MonoBehaviour
         if (Mouse.current == null)
             return;
 
+            if (mainCamera == null)
+        {
+        mainCamera = Camera.main;
+        if (mainCamera == null)
+            return;
+        }
+
         Vector2 mousePosition = Mouse.current.position.ReadValue();
 
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(mousePosition);

@@ -48,6 +48,27 @@ public class InputManager : MonoBehaviour, IPlayerActions
         playerInputAction.Player.Disable();
     }
 
+    // === Tambahan: kontrol manual enable/disable dari luar (misal saat buka menu Settings) ===
+    public void EnablePlayerInput()
+    {
+        playerInputAction.Player.Enable();
+    }
+
+    public void DisablePlayerInput()
+    {
+        // Reset state supaya nggak "nyangkut" true saat re-enable nanti
+        MoveInput = Vector2.zero;
+        RunInput = false;
+        AttackPressed = false;
+
+        playerInputAction.Player.Disable();
+    }
+
+    public bool IsPlayerInputEnabled()
+    {
+        return playerInputAction.Player.enabled;
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         MoveInput = context.ReadValue<Vector2>();
@@ -97,35 +118,19 @@ public class InputManager : MonoBehaviour, IPlayerActions
         shakeCoroutine = null;
     }
 
-    public void OnLook(InputAction.CallbackContext context)
-    {
-    }
+    public void OnLook(InputAction.CallbackContext context) { }
 
-    public void OnInteract(InputAction.CallbackContext context)
-    {
-    }
+    public void OnInteract(InputAction.CallbackContext context) { }
 
-    public void OnCrouch(InputAction.CallbackContext context)
-    {
-    }
+    public void OnCrouch(InputAction.CallbackContext context) { }
 
-    public void OnJump(InputAction.CallbackContext context)
-    {
-    }
+    public void OnJump(InputAction.CallbackContext context) { }
 
-    public void OnPrevious(InputAction.CallbackContext context)
-    {
-    }
+    public void OnPrevious(InputAction.CallbackContext context) { }
 
-    public void OnNext(InputAction.CallbackContext context)
-    {
-    }
+    public void OnNext(InputAction.CallbackContext context) { }
 
-    public void OnSprint(InputAction.CallbackContext context)
-    {
-    }
+    public void OnSprint(InputAction.CallbackContext context) { }
 
-    public void OnPause(InputAction.CallbackContext context)
-    {
-    }
+    public void OnPause(InputAction.CallbackContext context) { }
 }
