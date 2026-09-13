@@ -58,7 +58,7 @@ public class CutTree : MonoBehaviour
             spawnPosition += new Vector3(
                 Random.Range(-1.5f, 1.5f),
                 Random.Range(0.2f, 0.8f),
-                Random.Range(-1.5f, 1.5f)
+                Random.Range(0f, 0f)
             );
 
             Quaternion randomRotation = Quaternion.Euler(

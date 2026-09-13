@@ -431,7 +431,7 @@ MonoBehaviour:
   player: {fileID: 1838665325}
   cutRange: 3
   showCutRange: 1
-  logPrefab: {fileID: 8661382605954819347, guid: c7122f4f627584285b7c89073640e271, type: 3}
+  logPrefab: {fileID: 2583668865981125255, guid: de2913d74eaf34271a536383c617db5e, type: 3}
   minLogs: 2
   maxLogs: 4
   normalTree: {fileID: 351037251}
@@ -983,7 +983,7 @@ MonoBehaviour:
   player: {fileID: 1838665325}
   cutRange: 3
   showCutRange: 1
-  logPrefab: {fileID: 8661382605954819347, guid: c7122f4f627584285b7c89073640e271, type: 3}
+  logPrefab: {fileID: 2583668865981125255, guid: de2913d74eaf34271a536383c617db5e, type: 3}
   minLogs: 2
   maxLogs: 4
   normalTree: {fileID: 573999449}
@@ -10203,7 +10203,7 @@ MonoBehaviour:
   player: {fileID: 1838665325}
   cutRange: 3
   showCutRange: 1
-  logPrefab: {fileID: 8661382605954819347, guid: c7122f4f627584285b7c89073640e271, type: 3}
+  logPrefab: {fileID: 2583668865981125255, guid: de2913d74eaf34271a536383c617db5e, type: 3}
   minLogs: 2
   maxLogs: 4
   normalTree: {fileID: 845991119}

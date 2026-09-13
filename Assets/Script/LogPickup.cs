@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class LogPickup : MonoBehaviour
@@ -6,19 +7,39 @@ public class LogPickup : MonoBehaviour
     [SerializeField] private float pickupRange = 2.5f;
     [SerializeField] private float moveSpeed = 8f;
 
+    [Header("Gravity")]
+    [SerializeField] private float gravityDuration = 0.5f;
+
     private Transform player;
     private LogInventory inventory;
 
     private bool isMovingToPlayer = false;
 
+    private Rigidbody rb;
+
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
+
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
 
         if (playerObject != null)
         {
             player = playerObject.transform;
             inventory = playerObject.GetComponent<LogInventory>();
+        }
+
+        StartCoroutine(StopGravity());
+    }
+
+    private IEnumerator StopGravity()
+    {
+        yield return new WaitForSeconds(gravityDuration);
+
+        if (rb != null)
+        {
+            rb.useGravity = false;
+            rb.linearVelocity = Vector3.zero;
         }
     }
 
@@ -34,13 +55,18 @@ public class LogPickup : MonoBehaviour
 
         if (!isMovingToPlayer && distance <= pickupRange)
         {
-            // Cek inventory sebelum mengambil
             if (inventory.IsFull())
             {
                 return;
             }
 
             isMovingToPlayer = true;
+
+            if (rb != null)
+            {
+                rb.useGravity = false;
+                rb.linearVelocity = Vector3.zero;
+            }
         }
 
         if (isMovingToPlayer)
