@@ -6,12 +6,12 @@ public class PlayerAttack : MonoBehaviour
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 2.5f;
 
-    private InputManager inputManager;
+    public InputManager inputManager;
     private Camera mainCamera;
 
     private void Awake()
     {
-        inputManager = GetComponent<InputManager>();
+        // inputManager = FindGetComponent<InputManager>();
         mainCamera = Camera.main;
     }
 

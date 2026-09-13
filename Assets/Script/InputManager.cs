@@ -45,8 +45,6 @@ public class InputManager : MonoBehaviour, IPlayerActions
         if (context.performed)
         {
             AttackPressed = true;
-            CutTree tree = FindObjectOfType<CutTree>();
-            tree.TakeDamage();
         }
     }
     public void ResetAttack()
@@ -79,6 +77,9 @@ public class InputManager : MonoBehaviour, IPlayerActions
     }
 
     public void OnSprint(InputAction.CallbackContext context)
+    {
+    }
+    public void OnPause(InputAction.CallbackContext context)
     {
     }
 }
