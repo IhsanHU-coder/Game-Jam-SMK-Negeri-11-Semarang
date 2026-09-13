@@ -1,3 +1,5 @@
+using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static InputSystem_Actions;
@@ -13,11 +15,27 @@ public class InputManager : MonoBehaviour, IPlayerActions
     public bool AttackInput { get; private set; }
     public bool AttackPressed { get; private set; }
 
+    [Header("Camera Shake")]
+    [SerializeField] private CinemachineCamera cinemachineCamera;
+    [SerializeField] private float hitAmplitude = 2f;
+    [SerializeField] private float hitFrequency = 2f;
+    [SerializeField] private float shakeDuration = 0.15f;
+
+    private CinemachineBasicMultiChannelPerlin noisePerlin;
+    private Coroutine shakeCoroutine;
+
     private void Awake()
     {
         playerInputAction = new InputSystem_Actions();
 
         playerInputAction.Player.SetCallbacks(this);
+
+        if (cinemachineCamera != null)
+        {
+            noisePerlin = cinemachineCamera.GetCinemachineComponent(
+                CinemachineCore.Stage.Noise
+            ) as CinemachineBasicMultiChannelPerlin;
+        }
     }
 
     private void OnEnable()
@@ -47,9 +65,36 @@ public class InputManager : MonoBehaviour, IPlayerActions
             AttackPressed = true;
         }
     }
+
     public void ResetAttack()
     {
         AttackPressed = false;
+    }
+
+    public void PlayHitShake()
+    {
+        if (noisePerlin == null)
+            return;
+
+        if (shakeCoroutine != null)
+        {
+            StopCoroutine(shakeCoroutine);
+        }
+
+        shakeCoroutine = StartCoroutine(CameraShake());
+    }
+
+    private IEnumerator CameraShake()
+    {
+        noisePerlin.AmplitudeGain = hitAmplitude;
+        noisePerlin.FrequencyGain = hitFrequency;
+
+        yield return new WaitForSeconds(shakeDuration);
+
+        noisePerlin.AmplitudeGain = 0f;
+        noisePerlin.FrequencyGain = 0f;
+
+        shakeCoroutine = null;
     }
 
     public void OnLook(InputAction.CallbackContext context)
@@ -79,6 +124,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
     public void OnSprint(InputAction.CallbackContext context)
     {
     }
+
     public void OnPause(InputAction.CallbackContext context)
     {
     }

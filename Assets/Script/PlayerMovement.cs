@@ -5,7 +5,10 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
     float currentSpeed = 0f;
+    [SerializeField]
     float walkSpeed = 5f;
+    [SerializeField]
+
     float runSpeed = 10f;
     Rigidbody2D rb;
     Vector2 moveInput;
@@ -24,7 +27,7 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         rb.linearVelocity = moveInput * currentSpeed;
-        
+
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -33,32 +36,26 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed)
         {
             currentSpeed = walkSpeed;
-        }else if (context.canceled)
+        }
+        else if (context.canceled)
         {
             currentSpeed = 0f;
         }
-        if(moveInput != Vector2.zero || currentSpeed == 0)
+        if (moveInput != Vector2.zero)
         {
             animator.SetFloat("XInput", moveInput.x);
             animator.SetFloat("YInput", moveInput.y);
         }
-        if (currentSpeed > 1f && currentSpeed < 9f)
-        {
-            animator.SetBool("IsWalking", true);
-        }
-        else
-        {
-            animator.SetBool("IsWalking", false);
-        }
-        
-        if (currentSpeed > 5f && currentSpeed <= 10f)
-        {
-            animator.SetBool("IsRunning", true);
-        }
-        else
-        {
-            animator.SetBool("IsRunning", false);
-        }
+
+        animator.SetBool(
+            "IsWalking",
+            currentSpeed == walkSpeed && moveInput != Vector2.zero
+        );
+
+        animator.SetBool(
+            "IsRunning",
+            currentSpeed == runSpeed && moveInput != Vector2.zero
+        );
 
     }
     public void Run(InputAction.CallbackContext context)
@@ -67,10 +64,10 @@ public class PlayerMovement : MonoBehaviour
         {
             currentSpeed = runSpeed;
         }
-        else if (context.canceled)
-        {
-            currentSpeed = walkSpeed;
-        }
+        // else if (context.canceled)
+        // {
+        //     currentSpeed = walkSpeed;
+        // }
     }
 
 }
