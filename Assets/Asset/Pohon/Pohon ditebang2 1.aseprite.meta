@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: eb27d86fc079c4a81af6c2e769055f3a
+guid: 35e0701ce95d14da4a86f6a52454dd28
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -102,7 +102,7 @@ ScriptedImporter:
     generateIndividualEvents: 1
     generateSpriteAtlas: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639249269950836660
+  platformSettingsDirtyTick: 639249299419803970
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -127,9 +127,9 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: Pohon ditebang
+  - name: Pohon ditebang2
     originalName: 
-    pivot: {x: 0.5, y: -0.33333334}
+    pivot: {x: 0.56, y: -0.15}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -137,9 +137,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 46
-      height: 36
-    spriteID: f7c66391d538a4f13baa554eca0059ae
+      width: 25
+      height: 20
+    spriteID: 9e967a0f1a0a845da837279f48116a5a
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -153,25 +153,25 @@ ScriptedImporter:
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 2079181690
+      value0: 3457491336
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: Pohon ditebang
+    name: Pohon ditebang2
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Pohon ditebang
+    - name: Pohon ditebang2 1
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 9
-        y: 12
-        width: 46
-        height: 36
-      spriteId: f7c66391d538a4f13baa554eca0059ae
+        x: 18
+        y: 3
+        width: 25
+        height: 20
+      spriteId: 9e967a0f1a0a845da837279f48116a5a
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
@@ -242,4 +242,4 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 64, y: 64}
-  previousTextureSize: {x: 64, y: 64}
+  previousTextureSize: {x: 64, y: 32}

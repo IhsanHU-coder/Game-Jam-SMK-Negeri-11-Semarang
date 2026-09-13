@@ -7,6 +7,8 @@ public class LogPickup : MonoBehaviour
     [SerializeField] private float moveSpeed = 8f;
 
     private Transform player;
+    private LogInventory inventory;
+
     private bool isMovingToPlayer = false;
 
     private void Start()
@@ -16,23 +18,31 @@ public class LogPickup : MonoBehaviour
         if (playerObject != null)
         {
             player = playerObject.transform;
+            inventory = playerObject.GetComponent<LogInventory>();
         }
     }
 
     private void Update()
     {
-        if (player == null)
+        if (player == null || inventory == null)
             return;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(
+            transform.position,
+            player.position
+        );
 
-        // Player is close enough
         if (!isMovingToPlayer && distance <= pickupRange)
         {
+            // Cek inventory sebelum mengambil
+            if (inventory.IsFull())
+            {
+                return;
+            }
+
             isMovingToPlayer = true;
         }
 
-        // Move toward player
         if (isMovingToPlayer)
         {
             transform.position = Vector3.MoveTowards(
@@ -41,10 +51,18 @@ public class LogPickup : MonoBehaviour
                 moveSpeed * Time.deltaTime
             );
 
-            // Reached player
             if (Vector3.Distance(transform.position, player.position) < 0.2f)
             {
-                Destroy(gameObject);
+                bool success = inventory.AddLog();
+
+                if (success)
+                {
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    isMovingToPlayer = false;
+                }
             }
         }
     }

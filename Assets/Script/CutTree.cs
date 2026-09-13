@@ -21,13 +21,20 @@ public class CutTree : MonoBehaviour
     [SerializeField] private int minLogs = 2;
     [SerializeField] private int maxLogs = 4;
 
+    [Header("Tree Visual")]
+    [SerializeField] private GameObject normalTree;
+    [SerializeField] private GameObject cutTree;
+
     public void TakeDamage()
     {
         int damage = Random.Range(minDamage, maxDamage + 1);
 
         treeHealth -= damage;
 
-        Debug.Log("Tree took " + damage + " damage. HP: " + treeHealth);
+        Debug.Log(
+            "Tree took " + damage +
+            " damage. HP: " + treeHealth
+        );
 
         if (treeHealth <= 0)
         {
@@ -37,7 +44,12 @@ public class CutTree : MonoBehaviour
 
     private void CutDownTree()
     {
-        int logAmount = Random.Range(minLogs, maxLogs + 1);
+        normalTree.SetActive(false);
+        cutTree.SetActive(true);
+        int logAmount = Random.Range(
+            minLogs,
+            maxLogs + 1
+        );
 
         for (int i = 0; i < logAmount; i++)
         {
@@ -83,6 +95,9 @@ public class CutTree : MonoBehaviour
         if (!showCutRange)
             return;
 
-        Gizmos.DrawWireSphere(transform.position, cutRange);
+        Gizmos.DrawWireSphere(
+            transform.position,
+            cutRange
+        );
     }
 }
