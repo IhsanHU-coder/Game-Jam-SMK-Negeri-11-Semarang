@@ -1,7 +1,7 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using TMPro;
 
 public class LogStorage : MonoBehaviour
 {
@@ -305,4 +305,17 @@ public class LogStorage : MonoBehaviour
             interactionRange
         );
     }
+    public bool TryConsumeLogs(int amount)
+{
+    if (storedLogs >= amount)
+    {
+        storedLogs -= amount;
+        UpdateStorageText();
+        Debug.Log("Berhasil menggunakan " + amount + " logs. Sisa storage: " + storedLogs);
+        return true;
+    }
+
+    Debug.Log("Log di storage tidak cukup! Butuh: " + amount + ", Tersedia: " + storedLogs);
+    return false;
+}
 }
