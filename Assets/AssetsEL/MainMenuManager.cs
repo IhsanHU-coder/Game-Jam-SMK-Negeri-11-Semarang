@@ -187,4 +187,9 @@ public class MainMenuManager : MonoBehaviour
         if (panelHidden != null)
             panelHidden.SetActive(true);
     }
+
+    public void OpenLink()
+    {
+        Application.OpenURL("https://youtu.be/nbqmZojgxYg");
+    }
 }
