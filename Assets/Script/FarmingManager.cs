@@ -664,67 +664,85 @@ public class FarmingManager : MonoBehaviour
     // PLANT HOLD
     // =========================================================
 
+[Header("Audio")]
+[SerializeField] private string plantHoldSoundId = "PlantHold";
+[SerializeField] private float plantHoldSoundInterval = 0.15f;
+
+private float holdSoundTimer = 0f;
+
     private void HandlePlantHold()
+{
+    if (Mouse.current == null)
+        return;
+
+    if (SeedInventory.SeedCount <= 0)
     {
-        if (Mouse.current == null)
-            return;
-
-        if (SeedInventory.SeedCount <= 0)
-        {
-            CancelHold();
-            return;
-        }
-
-        Vector3Int? mouseCell =
-            GetCellUnderMouse();
-
-        if (!mouseCell.HasValue)
-        {
-            CancelHold();
-            return;
-        }
-
-        Vector3Int cell =
-            mouseCell.Value;
-
-        if (!validTilesInRange.Contains(cell))
-        {
-            CancelHold();
-            return;
-        }
-
-        if (!isHolding)
-        {
-            if (Mouse.current.leftButton.wasPressedThisFrame)
-            {
-                TryStartHold(cell);
-            }
-
-            return;
-        }
-
-        if (!Mouse.current.leftButton.isPressed)
-        {
-            CancelHold();
-            return;
-        }
-
-        if (!currentHoldCell.HasValue ||
-            currentHoldCell.Value != cell)
-        {
-            CancelHold();
-            return;
-        }
-
-        currentHoldTime += Time.deltaTime;
-
-        UpdateHoldIndicatorVisual();
-
-        if (currentHoldTime >= plantHoldDuration)
-        {
-            CompleteHold();
-        }
+        CancelHold();
+        return;
     }
+
+    Vector3Int? mouseCell =
+        GetCellUnderMouse();
+
+    if (!mouseCell.HasValue)
+    {
+        CancelHold();
+        return;
+    }
+
+    Vector3Int cell =
+        mouseCell.Value;
+
+    if (!validTilesInRange.Contains(cell))
+    {
+        CancelHold();
+        return;
+    }
+
+    if (!isHolding)
+    {
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            TryStartHold(cell);
+        }
+
+        return;
+    }
+
+    if (!Mouse.current.leftButton.isPressed)
+    {
+        CancelHold();
+        return;
+    }
+
+    if (!currentHoldCell.HasValue ||
+        currentHoldCell.Value != cell)
+    {
+        CancelHold();
+        return;
+    }
+
+    currentHoldTime += Time.deltaTime;
+
+    UpdateHoldIndicatorVisual();
+
+    // Mainkan suara berulang selama proses hold berlangsung
+    holdSoundTimer -= Time.deltaTime;
+    if (holdSoundTimer <= 0f)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(plantHoldSoundId);
+        }
+
+        holdSoundTimer = plantHoldSoundInterval;
+    }
+
+    if (currentHoldTime >= plantHoldDuration)
+    {
+        CompleteHold();
+    }
+}
 
     // =========================================================
     // MOUSE CELL
@@ -1091,28 +1109,36 @@ public class FarmingManager : MonoBehaviour
     // WATERING CLICK
     // =========================================================
 
+    [Header("Audio")]
+[SerializeField] private string wateringSoundId = "Watering";
+
     private void HandleWateringClick()
+{
+    if (Mouse.current == null)
+        return;
+
+    if (!Mouse.current.leftButton.wasPressedThisFrame)
+        return;
+
+    Vector3Int? mouseCell =
+        GetCellUnderMouse();
+
+    if (!mouseCell.HasValue)
+        return;
+
+    Vector3Int cell =
+        mouseCell.Value;
+
+    if (!validTilesInRange.Contains(cell))
+        return;
+
+    WaterAt(cell);
+
+    if (AudioManager.Instance != null)
     {
-        if (Mouse.current == null)
-            return;
-
-        if (!Mouse.current.leftButton.wasPressedThisFrame)
-            return;
-
-        Vector3Int? mouseCell =
-            GetCellUnderMouse();
-
-        if (!mouseCell.HasValue)
-            return;
-
-        Vector3Int cell =
-            mouseCell.Value;
-
-        if (!validTilesInRange.Contains(cell))
-            return;
-
-        WaterAt(cell);
+        AudioManager.Instance.PlaySFX(wateringSoundId);
     }
+}
 
     // =========================================================
     // WATER AT TILE

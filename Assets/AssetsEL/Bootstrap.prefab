@@ -97,6 +97,9 @@ MonoBehaviour:
   - id: UpgradeFail
     clip: {fileID: 8300000, guid: 0ccfcdc0c9ac0b2409c7dfb168025d8f, type: 3}
     volume: 1
+  - id: PlantHold
+    clip: {fileID: 8300000, guid: 191bf4dfb4c08874a9ada29cb87c9de3, type: 3}
+    volume: 1
   poolSize: 1
 --- !u!114 &8162482341736569329
 MonoBehaviour:
