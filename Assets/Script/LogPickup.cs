@@ -22,6 +22,10 @@ public class LogPickup : MonoBehaviour
 
     private void Start()
     {
+        // === TAMBAHAN ===
+        LogPickupTracker.RegisterPickup();
+        // === akhir tambahan ===
+
         rb = GetComponent<Rigidbody>();
 
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
@@ -91,6 +95,10 @@ public class LogPickup : MonoBehaviour
                     {
                         AudioManager.Instance.PlaySFX(pickupSoundId);
                     }
+
+                    // === TAMBAHAN ===
+                    LogPickupTracker.ReportPickedUp();
+                    // === akhir tambahan ===
 
                     Destroy(gameObject);
                 }
