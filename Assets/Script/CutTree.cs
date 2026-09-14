@@ -137,52 +137,63 @@ public class CutTree : MonoBehaviour
     }
 
     private void CutDownTree()
+{
+    if (normalTree != null)
+        normalTree.SetActive(false);
+
+    if (cutTree != null)
+        cutTree.SetActive(true);
+
+    // Mainkan suara pohon tumbang lewat AudioManager
+    if (AudioManager.Instance != null)
     {
-        if (normalTree != null) normalTree.SetActive(false);
-        if (cutTree != null) cutTree.SetActive(true);
-
-        // Mainkan suara pohon tumbang lewat AudioManager
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlaySFX(treeFallSoundId);
-        }
-
-        int logAmount = Random.Range(minLogs, maxLogs + 1);
-
-        for (int i = 0; i < logAmount; i++)
-        {
-            Vector3 spawnPosition = transform.position + new Vector3(
-                Random.Range(-1.5f, 1.5f),
-                Random.Range(0.2f, 0.8f),
-                0f
-            );
-
-            Quaternion randomRotation = Quaternion.Euler(
-                Random.Range(-15f, 15f),
-                Random.Range(0f, 360f),
-                Random.Range(-15f, 15f)
-            );
-
-            GameObject log = Instantiate(logPrefab, spawnPosition, randomRotation);
-            Rigidbody rb = log.GetComponent<Rigidbody>();
-
-            if (rb != null)
-            {
-                Vector3 randomForce = new Vector3(
-                    Random.Range(-1f, 1f),
-                    Random.Range(1f, 2f),
-                    Random.Range(-1f, 1f)
-                );
-                rb.AddForce(randomForce, ForceMode.Impulse);
-            }
-        }
-
-        // === TAMBAHAN ===
-        TreeTracker.ReportTreeChopped();
-        // === akhir tambahan ===
-
-        Destroy(gameObject);
+        AudioManager.Instance.PlaySFX(treeFallSoundId);
     }
+
+    int logAmount = Random.Range(minLogs, maxLogs + 1);
+
+    for (int i = 0; i < logAmount; i++)
+    {
+        Vector3 spawnPosition = transform.position + new Vector3(
+            Random.Range(-1.5f, 1.5f),
+            Random.Range(0.2f, 0.8f),
+            0f
+        );
+
+        Quaternion randomRotation = Quaternion.Euler(
+            Random.Range(-15f, 15f),
+            Random.Range(0f, 360f),
+            Random.Range(-15f, 15f)
+        );
+
+        GameObject log = Instantiate(
+            logPrefab,
+            spawnPosition,
+            randomRotation
+        );
+
+        // PENTING:
+        // Setiap log yang muncul di tanah dihitung oleh tracker
+        LogPickupTracker.RegisterSpawnedLog();
+
+        Rigidbody rb = log.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            Vector3 randomForce = new Vector3(
+                Random.Range(-1f, 1f),
+                Random.Range(1f, 2f),
+                Random.Range(-1f, 1f)
+            );
+
+            rb.AddForce(randomForce, ForceMode.Impulse);
+        }
+    }
+
+    TreeTracker.ReportTreeChopped();
+
+    Destroy(gameObject);
+}
 
     private void OnDrawGizmos()
     {

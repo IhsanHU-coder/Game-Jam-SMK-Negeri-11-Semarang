@@ -22,8 +22,7 @@ public class LogPickup : MonoBehaviour
 
     private void Start()
     {
-        // === TAMBAHAN ===
-        LogPickupTracker.RegisterPickup();
+        // === TAMBAHAN ===     
         // === akhir tambahan ===
 
         rb = GetComponent<Rigidbody>();
