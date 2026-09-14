@@ -88,9 +88,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 463e434ebd88c4b3891654470ac0843f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LogPickup
-  pickupRange: 1
+  pickupRange: 0.8
   moveSpeed: 8
   gravityDuration: 0.5
+  pickupSoundId: LogPickup
 --- !u!54 &-7652342477293670480
 Rigidbody:
   m_ObjectHideFlags: 0

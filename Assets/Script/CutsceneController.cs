@@ -1,41 +1,95 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Hapus baris ini dan ganti Text jika tidak pakai TextMeshPro
+using UnityEngine.SceneManagement;
+using TMPro;
+
 public class CutsceneController : MonoBehaviour
 {
-    [Header("Referensi UI")]
-    public Image cutsceneImage;
-    public TMP_Text storyText; // Jika pakai UI Text biasa, ganti jadi: public Text storyText;
-    public CanvasGroup textCanvasGroup; // CanvasGroup pembungkus storyText, untuk efek fade out
-    public Button nextButton; // opsional: klik untuk skip animasi ketik atau lanjut manual
+    [Header("Panel Background (Wadah Semua Konten)")]
+    [Tooltip("CanvasGroup paling luar yang membungkus SEMUA konten cutscene.")]
+    public CanvasGroup panelBackgroundCanvasGroup;
+
+    [Header("TV Panel (Video + Frame TV)")]
+    [Tooltip("CanvasGroup yang membungkus panel TV (video + frame). Fade in & fade out BARENG dengan dialog.")]
+    public CanvasGroup tvPanelCanvasGroup;
+
+    [Header("Dialog / Story Text")]
+    public TMP_Text storyText;
+
+    [Tooltip("CanvasGroup yang membungkus DialoguePanel (parent dari storyText).")]
+    public CanvasGroup dialoguePanelCanvasGroup;
+
+    [Tooltip("Klik untuk skip animasi ketik atau skip jeda.")]
+    public Button nextButton;
 
     [Header("Isi Cerita")]
     [TextArea(2, 4)]
     public string[] storyLines;
 
-    [Header("Animasi Ketik (Typewriter)")]
-    [Tooltip("Jeda antar huruf saat mengetik, dalam detik")]
-    public float typingSpeed = 0.04f;
-    [Tooltip("Berapa lama teks diam penuh sebelum mulai menghilang, setelah selesai diketik")]
-    public float holdDuration = 1.5f;
-    [Tooltip("Lama durasi animasi teks menghilang (fade out)")]
-    public float fadeOutDuration = 0.6f;
+    [Header("Teks Tengah (Transisi setelah Dialog Selesai)")]
+    public TMP_Text middleText;
+    public CanvasGroup middleTextCanvasGroup;
 
-    [Header("Mode Lanjut")]
-    [Tooltip("Jika true, baris berikutnya muncul otomatis setelah teks menghilang. Jika false, pemain klik NextButton untuk lanjut ke baris berikutnya.")]
-    public bool autoAdvance = true;
+    [TextArea(1, 2)]
+    public string middleTextContent = "Player sudah diterjunkan ke lokasi";
+
+    [Header("Animasi Ketik (Typewriter)")]
+
+    [Tooltip(
+        "Jeda antar tick mengetik dalam detik. " +
+        "Semakin kecil semakin cepat. Characters Per Tick menentukan " +
+        "berapa karakter muncul sekaligus."
+    )]
+    public float typingSpeed = 0.05f;
+
+    [Tooltip(
+        "Jumlah karakter yang muncul setiap tick. " +
+        "1 = normal, 2-5 = cepat, 10+ = sangat cepat."
+    )]
+    public int charactersPerTick = 3;
+
+    [Tooltip(
+        "Berapa lama teks diam penuh sebelum lanjut/hilang, setelah selesai diketik."
+    )]
+    public float holdDuration = 1.5f;
+
+    [Header("Durasi Fade")]
+    public float introFadeInDuration = 0.8f;
+    public float outroFadeOutDuration = 0.8f;
+    public float middleTextFadeInDuration = 0.6f;
+    public float middleTextHoldDuration = 1.5f;
+    public float middleTextFadeOutDuration = 0.6f;
+    public float finalPanelFadeOutDuration = 1.0f;
 
     [Header("Tujuan Scene Berikutnya")]
     public string gameplaySceneName = "Gameplay";
 
+    [Header("Cleanup Scene Prolog")]
+    [Tooltip(
+        "Nama scene cutscene/prolog ini sendiri, yang akan di-unload/destroy " +
+        "setelah PanelBackground selesai fade out."
+    )]
+    public string prologSceneName = "PrologScene";
+
+    [Tooltip(
+        "Jeda dalam detik SETELAH PanelBackground selesai fade out, " +
+        "sebelum PrologScene di-unload/destroy."
+    )]
+    public float destroyDelayAfterFadeOut = 2f;
+
     [Header("Mode Testing")]
-    [Tooltip("Jika dicentang, di akhir cerita TIDAK akan pindah scene, hanya muncul log di Console. Gunakan untuk mengetes animasi ketik & fade tanpa mengganggu scene lain. Matikan sebelum build/rilis.")]
+    [Tooltip(
+        "Jika dicentang, di akhir cerita TIDAK akan load scene Gameplay " +
+        "ataupun fade out PanelBackground."
+    )]
     public bool testMode = false;
 
     private int currentLine = 0;
-    private Coroutine lineRoutine;
+
     private bool isTyping = false;
+    private bool skipTyping = false;
+    private bool skipHold = false;
 
     private void Start()
     {
@@ -44,10 +98,25 @@ public class CutsceneController : MonoBehaviour
             nextButton.onClick.AddListener(OnNextPressed);
         }
 
-        if (storyLines.Length > 0)
-        {
-            lineRoutine = StartCoroutine(PlayLine(0));
-        }
+        // PanelBackground full opaque sejak awal
+        if (panelBackgroundCanvasGroup != null)
+            panelBackgroundCanvasGroup.alpha = 1f;
+
+        // TV panel & DialoguePanel mulai transparan
+        if (tvPanelCanvasGroup != null)
+            tvPanelCanvasGroup.alpha = 0f;
+
+        if (dialoguePanelCanvasGroup != null)
+            dialoguePanelCanvasGroup.alpha = 0f;
+
+        // Teks tengah mulai transparan
+        if (middleTextCanvasGroup != null)
+            middleTextCanvasGroup.alpha = 0f;
+
+        if (middleText != null)
+            middleText.text = middleTextContent;
+
+        StartCoroutine(RunCutsceneSequence());
     }
 
     private void OnDestroy()
@@ -57,124 +126,418 @@ public class CutsceneController : MonoBehaviour
             nextButton.onClick.RemoveListener(OnNextPressed);
         }
     }
-    private IEnumerator PlayLine(int index)
+
+    /// <summary>
+    /// Alur utama cutscene:
+    /// 1) Fade in TV panel + dialog
+    /// 2) Mainkan semua baris dialog
+    /// 3) Fade out TV panel + dialog
+    /// 4) Fade in teks tengah
+    /// 5) Load scene Gameplay secara additive
+    /// 6) Fade out teks tengah
+    /// 7) Fade out PanelBackground
+    /// 8) Unload PrologScene
+    /// </summary>
+    private IEnumerator RunCutsceneSequence()
     {
-        if (storyText == null || index < 0 || index >= storyLines.Length) yield break;
+        // =========================================================
+        // 1. FADE IN TV PANEL + DIALOG
+        // =========================================================
 
-        // Pastikan teks terlihat penuh (alpha 1) sebelum mulai mengetik baris baru
-        if (textCanvasGroup != null) textCanvasGroup.alpha = 1f;
+        yield return StartCoroutine(
+            FadeCanvasGroupsTogether(
+                new[] { tvPanelCanvasGroup, dialoguePanelCanvasGroup },
+                0f,
+                1f,
+                introFadeInDuration
+            )
+        );
 
-        // --- Efek ketik (typewriter) ---
-        isTyping = true;
-        storyText.text = "";
-        string fullLine = storyLines[index];
 
-        foreach (char c in fullLine)
+        // =========================================================
+        // 2. MAINKAN SEMUA BARIS DIALOG
+        // =========================================================
+
+        if (storyLines != null && storyLines.Length > 0)
         {
-            storyText.text += c;
-            yield return new WaitForSeconds(typingSpeed);
+            yield return StartCoroutine(PlayAllLines());
         }
-        isTyping = false;
 
-        // --- Diam sejenak supaya pemain sempat baca ---
-        yield return new WaitForSeconds(holdDuration);
 
-        // --- Teks menghilang (fade out) ---
-        yield return StartCoroutine(FadeTextOut());
+        // =========================================================
+        // 3. FADE OUT TV PANEL + DIALOG
+        // =========================================================
 
-        // --- Lanjut otomatis ke baris berikutnya / atau selesai ---
-        if (autoAdvance)
+        yield return StartCoroutine(
+            FadeCanvasGroupsTogether(
+                new[] { tvPanelCanvasGroup, dialoguePanelCanvasGroup },
+                1f,
+                0f,
+                outroFadeOutDuration
+            )
+        );
+
+
+        // =========================================================
+        // 4. FADE IN TEKS TENGAH
+        // =========================================================
+
+        yield return StartCoroutine(
+            FadeCanvasGroupsTogether(
+                new[] { middleTextCanvasGroup },
+                0f,
+                1f,
+                middleTextFadeInDuration
+            )
+        );
+
+
+        AsyncOperation loadOp = null;
+
+
+        // =========================================================
+        // 5. LOAD GAMEPLAY ADDITIVE
+        // =========================================================
+
+        if (!testMode)
         {
-            AdvanceToNextLine();
+            loadOp = SceneManager.LoadSceneAsync(
+                gameplaySceneName,
+                LoadSceneMode.Additive
+            );
         }
-    }
 
-    private IEnumerator FadeTextOut()
-    {
-        if (textCanvasGroup == null) yield break;
 
-        float startAlpha = textCanvasGroup.alpha;
-        float time = 0f;
+        // =========================================================
+        // TAHAN TEKS TENGAH
+        // =========================================================
 
-        while (time < fadeOutDuration)
+        yield return StartCoroutine(
+            WaitOrSkip(middleTextHoldDuration)
+        );
+
+
+        // =========================================================
+        // PASTIKAN GAMEPLAY SELESAI LOAD
+        // =========================================================
+
+        while (loadOp != null && !loadOp.isDone)
         {
-            time += Time.deltaTime;
-            textCanvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, time / fadeOutDuration);
             yield return null;
         }
 
-        textCanvasGroup.alpha = 0f;
+
+        // =========================================================
+        // 6. FADE OUT TEKS TENGAH
+        // =========================================================
+
+        yield return StartCoroutine(
+            FadeCanvasGroupsTogether(
+                new[] { middleTextCanvasGroup },
+                1f,
+                0f,
+                middleTextFadeOutDuration
+            )
+        );
+
+
+        // =========================================================
+        // 7. FADE OUT PANEL BACKGROUND
+        // =========================================================
+
+        if (!testMode)
+        {
+            yield return StartCoroutine(
+                FadeCanvasGroupsTogether(
+                    new[] { panelBackgroundCanvasGroup },
+                    1f,
+                    0f,
+                    finalPanelFadeOutDuration
+                )
+            );
+
+
+            // =====================================================
+            // 8. TUNGGU SEBELUM UNLOAD PROLOG
+            // =====================================================
+
+            yield return new WaitForSeconds(
+                destroyDelayAfterFadeOut
+            );
+
+
+            if (!string.IsNullOrEmpty(prologSceneName))
+            {
+                SceneManager.UnloadSceneAsync(
+                    prologSceneName
+                );
+            }
+        }
+        else
+        {
+            Debug.Log(
+                "[CutsceneController] Cutscene SELESAI. " +
+                "(Test Mode aktif, tidak load Gameplay, " +
+                "tidak fade out PanelBackground, " +
+                "tidak destroy PrologScene)."
+            );
+        }
     }
 
+
+    // =============================================================
+    // PLAY SEMUA DIALOG
+    // =============================================================
+
+    private IEnumerator PlayAllLines()
+    {
+        for (int i = 0; i < storyLines.Length; i++)
+        {
+            currentLine = i;
+
+            // Ketik satu kalimat
+            yield return StartCoroutine(
+                TypeLine(storyLines[i])
+            );
+
+
+            // Tunggu setelah kalimat selesai
+            yield return StartCoroutine(
+                WaitOrSkip(holdDuration)
+            );
+
+
+            // Kosongkan teks sebelum kalimat berikutnya
+            if (i < storyLines.Length - 1)
+            {
+                storyText.text = "";
+            }
+        }
+    }
+
+
+    // =============================================================
+    // TYPEWRITER
+    // =============================================================
+
+    private IEnumerator TypeLine(string line)
+    {
+        if (storyText == null)
+            yield break;
+
+        isTyping = true;
+        skipTyping = false;
+
+        storyText.text = "";
+
+        int index = 0;
+
+
+        // Jika charactersPerTick kurang dari 1,
+        // otomatis dianggap 1.
+        int charsPerTick = Mathf.Max(
+            1,
+            charactersPerTick
+        );
+
+
+        // =========================================================
+        // LOOP TYPEWRITER
+        // =========================================================
+
+        while (index < line.Length)
+        {
+            // -----------------------------------------------------
+            // SKIP TYPEWRITER
+            // -----------------------------------------------------
+
+            if (skipTyping)
+            {
+                storyText.text = line;
+                break;
+            }
+
+
+            // -----------------------------------------------------
+            // HITUNG JUMLAH KARAKTER
+            // -----------------------------------------------------
+
+            int remainingCharacters =
+                line.Length - index;
+
+            int count =
+                Mathf.Min(
+                    charsPerTick,
+                    remainingCharacters
+                );
+
+
+            // -----------------------------------------------------
+            // TAMBAHKAN KARAKTER SEKALIGUS
+            // -----------------------------------------------------
+
+            storyText.text += line.Substring(
+                index,
+                count
+            );
+
+            index += count;
+
+
+            // -----------------------------------------------------
+            // WAIT
+            // -----------------------------------------------------
+
+            if (index < line.Length)
+            {
+                // Jika typingSpeed <= 0,
+                // langsung lanjut tanpa delay.
+                if (typingSpeed > 0f)
+                {
+                    yield return new WaitForSeconds(
+                        typingSpeed
+                    );
+                }
+                else
+                {
+                    // Tetap kasih satu frame supaya
+                    // coroutine tidak membuat loop berat.
+                    yield return null;
+                }
+            }
+        }
+
+
+        isTyping = false;
+    }
+
+
+    // =============================================================
+    // NEXT BUTTON
+    // =============================================================
+
     /// <summary>
-    /// Dipanggil oleh tombol Lanjut (opsional). Jika teks masih dalam proses mengetik,
-    /// klik akan langsung menampilkan seluruh kalimat (skip animasi ketik).
-    /// Jika teks sudah selesai diketik, klik akan memaksa lanjut ke baris berikutnya.
+    /// Jika teks sedang diketik:
+    /// -> langsung tampilkan seluruh kalimat.
+    ///
+    /// Jika teks sudah selesai:
+    /// -> skip hold duration.
     /// </summary>
     public void OnNextPressed()
     {
         if (isTyping)
         {
-            // Skip animasi ketik: langsung tampilkan kalimat penuh
-            if (lineRoutine != null) StopCoroutine(lineRoutine);
-            storyText.text = storyLines[currentLine];
-            isTyping = false;
-            lineRoutine = StartCoroutine(FinishLineThenAdvance());
-        }
-        else if (!autoAdvance)
-        {
-            // Mode manual: paksa lanjut ke baris berikutnya
-            if (lineRoutine != null) StopCoroutine(lineRoutine);
-            StartCoroutine(SkipHoldThenAdvance());
-        }
-    }
-
-    private IEnumerator FinishLineThenAdvance()
-    {
-        yield return new WaitForSeconds(holdDuration);
-        yield return StartCoroutine(FadeTextOut());
-        AdvanceToNextLine();
-    }
-
-    private IEnumerator SkipHoldThenAdvance()
-    {
-        yield return StartCoroutine(FadeTextOut());
-        AdvanceToNextLine();
-    }
-
-    private void AdvanceToNextLine()
-    {
-        currentLine++;
-
-        if (currentLine < storyLines.Length)
-        {
-            lineRoutine = StartCoroutine(PlayLine(currentLine));
+            skipTyping = true;
         }
         else
         {
-            // Cerita selesai -> pindah ke gameplay dengan fade
-            GoToGameplay();
+            skipHold = true;
         }
     }
 
-    private void GoToGameplay()
+
+    // =============================================================
+    // WAIT OR SKIP
+    // =============================================================
+
+    private IEnumerator WaitOrSkip(float duration)
     {
-        if (testMode)
+        skipHold = false;
+
+        float time = 0f;
+
+
+        while (time < duration && !skipHold)
         {
-            // Mode testing: jangan pindah scene, cukup tampilkan log
-            Debug.Log("[CutsceneController] Cutscene SELESAI. (Test Mode aktif, tidak pindah scene). " +
-                      "Matikan 'Test Mode' di Inspector jika sudah siap pindah ke scene gameplay.");
-            return;
+            time += Time.deltaTime;
+
+            yield return null;
         }
 
-        if (SceneFader.Instance != null)
+
+        skipHold = false;
+    }
+
+
+    // =============================================================
+    // FADE CANVAS GROUP
+    // =============================================================
+
+    private IEnumerator FadeCanvasGroupsTogether(
+        CanvasGroup[] groups,
+        float from,
+        float to,
+        float duration
+    )
+    {
+        // Set nilai awal
+        foreach (var g in groups)
         {
-            SceneFader.Instance.LoadScene(gameplaySceneName);
+            if (g != null)
+            {
+                g.alpha = from;
+            }
         }
-        else
+
+
+        // Kalau durasi 0 atau negatif,
+        // langsung set ke nilai akhir.
+        if (duration <= 0f)
         {
-            // Fallback jika SceneFader belum ada di scene manapun
-            UnityEngine.SceneManagement.SceneManager.LoadScene(gameplaySceneName);
+            foreach (var g in groups)
+            {
+                if (g != null)
+                {
+                    g.alpha = to;
+                }
+            }
+
+            yield break;
+        }
+
+
+        float time = 0f;
+
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+
+
+            float t =
+                Mathf.Clamp01(
+                    time / duration
+                );
+
+
+            float value =
+                Mathf.Lerp(
+                    from,
+                    to,
+                    t
+                );
+
+
+            foreach (var g in groups)
+            {
+                if (g != null)
+                {
+                    g.alpha = value;
+                }
+            }
+
+
+            yield return null;
+        }
+
+
+        // Pastikan nilai akhir benar-benar tercapai
+        foreach (var g in groups)
+        {
+            if (g != null)
+            {
+                g.alpha = to;
+            }
         }
     }
 }

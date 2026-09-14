@@ -3,11 +3,9 @@ using UnityEngine;
 public class CutTree : MonoBehaviour
 {
     [Header("Tree Settings")]
-    [SerializeField] private int treeHealth = 10;
+    [SerializeField] private int treeHealth = 100;
 
-    [Header("Damage Per Attack")]
-    [SerializeField] private int minDamage = 1;
-    [SerializeField] private int maxDamage = 3;
+    // minDamage & maxDamage bawaan di CutTree diabaikan / dijadikan fallback
 
     [Header("Player Settings")]
     [SerializeField] private Transform player;
@@ -31,11 +29,38 @@ public class CutTree : MonoBehaviour
     [Header("Particle")]
     public ParticleSystem[] cutParticles;
 
+    [Header("Audio")]
+    [SerializeField] private string treeHitSoundId = "TreeHit";
+    [SerializeField] private string treeFallSoundId = "TreeFall";
+
+    public GameObject Axe;
+    public Animator axeAnimator;
+
+    private PlayerStats playerStats;
+
     private void Awake()
     {
         if (infoLogging != null)
         {
+            if (Axe != null) Axe.SetActive(false);
             infoLogging.SetActive(false);
+        }
+    }
+
+    private void Start()
+    {
+        if (player == null)
+        {
+            GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerObject != null)
+            {
+                player = playerObject.transform;
+            }
+        }
+
+        if (player != null)
+        {
+            playerStats = player.GetComponent<PlayerStats>();
         }
     }
 
@@ -48,23 +73,18 @@ public class CutTree : MonoBehaviour
     {
         if (player == null)
         {
-            if (infoLogging != null)
-            {
-                infoLogging.SetActive(false);
-            }
-
+            if (infoLogging != null) infoLogging.SetActive(false);
+            if (Axe != null) Axe.SetActive(false);
             return;
         }
 
-        float distance = Vector2.Distance(
-            transform.position,
-            player.position
-        );
+        float distance = Vector2.Distance(transform.position, player.position);
 
         if (distance <= cutRange)
         {
             if (infoLogging != null)
             {
+                if (Axe != null) Axe.SetActive(true);
                 infoLogging.SetActive(true);
             }
         }
@@ -72,6 +92,7 @@ public class CutTree : MonoBehaviour
         {
             if (infoLogging != null)
             {
+                if (Axe != null) Axe.SetActive(false);
                 infoLogging.SetActive(false);
             }
         }
@@ -79,45 +100,57 @@ public class CutTree : MonoBehaviour
 
     public void TakeDamage()
     {
-        int damage = Random.Range(minDamage, maxDamage + 1);
+        if (axeAnimator != null)
+            axeAnimator.Play("AxeClick");
 
+        // Ambil min/max damage dari PlayerStats jika ada, kalau tidak gunakan default (1-3)
+        int min = (playerStats != null) ? playerStats.minDamage : 1;
+        int max = (playerStats != null) ? playerStats.maxDamage : 3;
+
+        int damage = Random.Range(min, max + 1);
         treeHealth -= damage;
+
+        // Mainkan suara kena tebas lewat AudioManager
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(treeHitSoundId);
+        }
 
         foreach (var particle in cutParticles)
         {
-            particle.Play();
+            if (particle != null)
+                particle.Play();
         }
 
-        Debug.Log(
-            "Tree took " + damage +
-            " damage. HP: " + treeHealth
-        );
+        Debug.Log("Tree took " + damage + " damage. HP: " + treeHealth);
 
         if (treeHealth <= 0)
         {
-            infoLogging.SetActive(false);
+            if (Axe != null) Axe.SetActive(false);
+            if (infoLogging != null) infoLogging.SetActive(false);
             CutDownTree();
         }
     }
 
     private void CutDownTree()
     {
-        normalTree.SetActive(false);
-        cutTree.SetActive(true);
+        if (normalTree != null) normalTree.SetActive(false);
+        if (cutTree != null) cutTree.SetActive(true);
 
-        int logAmount = Random.Range(
-            minLogs,
-            maxLogs + 1
-        );
+        // Mainkan suara pohon tumbang lewat AudioManager
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(treeFallSoundId);
+        }
+
+        int logAmount = Random.Range(minLogs, maxLogs + 1);
 
         for (int i = 0; i < logAmount; i++)
         {
-            Vector3 spawnPosition = transform.position;
-
-            spawnPosition += new Vector3(
+            Vector3 spawnPosition = transform.position + new Vector3(
                 Random.Range(-1.5f, 1.5f),
                 Random.Range(0.2f, 0.8f),
-                Random.Range(0f, 0f)
+                0f
             );
 
             Quaternion randomRotation = Quaternion.Euler(
@@ -126,12 +159,7 @@ public class CutTree : MonoBehaviour
                 Random.Range(-15f, 15f)
             );
 
-            GameObject log = Instantiate(
-                logPrefab,
-                spawnPosition,
-                randomRotation
-            );
-
+            GameObject log = Instantiate(logPrefab, spawnPosition, randomRotation);
             Rigidbody rb = log.GetComponent<Rigidbody>();
 
             if (rb != null)
@@ -141,7 +169,6 @@ public class CutTree : MonoBehaviour
                     Random.Range(1f, 2f),
                     Random.Range(-1f, 1f)
                 );
-
                 rb.AddForce(randomForce, ForceMode.Impulse);
             }
         }
@@ -151,12 +178,7 @@ public class CutTree : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!showCutRange)
-            return;
-
-        Gizmos.DrawWireSphere(
-            transform.position,
-            cutRange
-        );
+        if (!showCutRange) return;
+        Gizmos.DrawWireSphere(transform.position, cutRange);
     }
 }

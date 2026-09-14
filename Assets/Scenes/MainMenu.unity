@@ -2423,6 +2423,42 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bootstrap
       objectReference: {fileID: 0}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: cursorUI
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: axeCursor
+      value: 
+      objectReference: {fileID: -8328923581568760697, guid: bce91533c167e40ddb053b6f00fcecc6, type: 3}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: cursorImage
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: normalCursor
+      value: 
+      objectReference: {fileID: -8328923581568760697, guid: dac0a7324ff294a11b4f7288a04a531a, type: 3}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: axeHitFrames.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: 'axeHitFrames.Array.data[0]'
+      value: 
+      objectReference: {fileID: -8328923581568760697, guid: fe789e0f42e8549968cb08a892fd0c73, type: 3}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: 'axeHitFrames.Array.data[1]'
+      value: 
+      objectReference: {fileID: -8328923581568760697, guid: fe789e0f42e8549968cb08a892fd0c73, type: 3}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: 'axeHitFrames.Array.data[2]'
+      value: 
+      objectReference: {fileID: -8328923581568760697, guid: fe789e0f42e8549968cb08a892fd0c73, type: 3}
+    - target: {fileID: 8162482341736569329, guid: 086071cd436b230418c030d40cbf46ef, type: 3}
+      propertyPath: 'axeHitFrames.Array.data[3]'
+      value: 
+      objectReference: {fileID: -8328923581568760697, guid: fe789e0f42e8549968cb08a892fd0c73, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

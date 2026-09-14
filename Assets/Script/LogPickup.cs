@@ -10,6 +10,9 @@ public class LogPickup : MonoBehaviour
     [Header("Gravity")]
     [SerializeField] private float gravityDuration = 0.5f;
 
+    [Header("Audio")]
+    [SerializeField] private string pickupSoundId = "LogPickup";
+
     private Transform player;
     private LogInventory inventory;
 
@@ -83,6 +86,12 @@ public class LogPickup : MonoBehaviour
 
                 if (success)
                 {
+                    // Mainkan suara pickup lewat AudioManager
+                    if (AudioManager.Instance != null)
+                    {
+                        AudioManager.Instance.PlaySFX(pickupSoundId);
+                    }
+
                     Destroy(gameObject);
                 }
                 else
