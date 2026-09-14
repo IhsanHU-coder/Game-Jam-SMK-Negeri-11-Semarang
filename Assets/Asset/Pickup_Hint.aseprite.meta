@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b6b384b0172acfe45a51e86847b654b8
+guid: 149a285b46e5fd84db4e8598d76fc992
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -36,7 +36,7 @@ ScriptedImporter:
     spriteMeshType: 1
     alignment: 0
     spritePivot: {x: 0.5, y: 0.5}
-    spritePixelsToUnits: 40
+    spritePixelsToUnits: 128
     spriteBorder: {x: 0, y: 0, z: 0, w: 0}
     spriteGenerateFallbackPhysicsShape: 0
     generateCubemap: 6
@@ -76,7 +76,7 @@ ScriptedImporter:
     importHiddenLayers: 0
     layerImportMode: 1
     defaultPivotSpace: 0
-    defaultPivotAlignment: 0
+    defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
     mosaicPadding: 4
     spritePadding: 0
@@ -91,7 +91,7 @@ ScriptedImporter:
     importHiddenLayers: 0
     layerImportMode: 1
     defaultPivotSpace: 0
-    defaultPivotAlignment: 0
+    defaultPivotAlignment: 7
     customPivotPosition: {x: 0.5, y: 0.5}
     mosaicPadding: 4
     spritePadding: 0
@@ -102,7 +102,7 @@ ScriptedImporter:
     generateIndividualEvents: 1
     generateSpriteAtlas: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639249934598372888
+  platformSettingsDirtyTick: 639250105243738365
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -127,9 +127,9 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: fertileSoilWithPlant 1
+  - name: Pickup_Hint
     originalName: 
-    pivot: {x: 0.5, y: 0.36842105}
+    pivot: {x: 0.5, y: -0.5588235}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -137,9 +137,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 24
-      height: 19
-    spriteID: e41507870fc621047a975b63ffd3aba0
+      width: 118
+      height: 34
+    spriteID: 79fb67965e7c1384e8d738ae163d87ac
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -153,25 +153,25 @@ ScriptedImporter:
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 1536291622
+      value0: 2403999862
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: fertileSoilWithPlant 1
+    name: Pickup_Hint
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: fertileSoilWithPlant 1
+    - name: Pickup_Hint
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 4
-        y: 9
-        width: 24
-        height: 19
-      spriteId: e41507870fc621047a975b63ffd3aba0
+        x: 5
+        y: 19
+        width: 118
+        height: 34
+      spriteId: 79fb67965e7c1384e8d738ae163d87ac
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
@@ -205,5 +205,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 32, y: 32}
-  previousTextureSize: {x: 32, y: 32}
+  canvasSize: {x: 128, y: 64}
+  previousTextureSize: {x: 128, y: 64}

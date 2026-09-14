@@ -20,6 +20,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menanam.unity
     guid: cd26f0004985d7d4582e7341783e6d67
+  - enabled: 1
+    path: Assets/Scenes/Gameplay2.unity
+    guid: 9c44af5ca05162c4993ea8d397ee13b2
+  - enabled: 1
+    path: Assets/Scenes/EndingScene.unity
+    guid: 339d77b4d4ff83d43bc1dbc9f63ca172
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
