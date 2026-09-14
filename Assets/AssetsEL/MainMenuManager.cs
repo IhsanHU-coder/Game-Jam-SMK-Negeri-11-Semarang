@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 /// Mengatur MainMenu: klik Play -> PanelMainMenu fade out sambil loading screen (persistent,
 /// lihat LoadingScreenController) fade in -> load scene Gameplay -> setelah siap, loading
 /// screen fade out -> delay sekian detik -> scene MainMenu ini di-unload.
-/// Juga mengatur buka/tutup Panel Credits.
+/// Juga mengatur buka/tutup Panel Credits dan Panel Settings.
 ///
 /// SETUP DI INSPECTOR:
 /// - PanelMainMenu butuh komponen CanvasGroup (Add Component > Canvas Group).
@@ -15,6 +15,10 @@ using UnityEngine.SceneManagement;
 /// - OnClick() Button "ButtonExit" -> OnExitClicked().
 /// - OnClick() Button "ButtonCredits" -> OnCreditsClicked().
 /// - OnClick() Button "ButtonBack" (di dalam PanelCredits) -> OnBackClicked().
+/// - OnClick() Button "ButtonSettings" -> OnSettingsClicked().
+/// - OnClick() Button "ButtonBack" (di dalam PanelSettings) -> OnCloseSettingsClicked().
+/// - panelHidden: image yang TAMPIL dari awal (jangan di-nonaktifkan manual di Inspector),
+///   otomatis hilang saat Settings dibuka, dan muncul lagi saat Settings ditutup.
 /// </summary>
 public class MainMenuManager : MonoBehaviour
 {
@@ -28,6 +32,10 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private CanvasGroup panelMainMenu;
     [Tooltip("GameObject panel Credits, defaultnya nonaktif.")]
     [SerializeField] private GameObject panelCredits;
+    [Tooltip("GameObject panel Settings, defaultnya nonaktif.")]
+    [SerializeField] private GameObject panelSettings;
+    [Tooltip("Image yang TAMPIL dari awal. Otomatis hilang saat panel Settings dibuka, dan muncul lagi saat Settings ditutup.")]
+    [SerializeField] private GameObject panelHidden;
 
     [Header("Scene Settings")]
     [Tooltip("Nama scene Gameplay yang akan di-load (harus sudah masuk Build Settings).")]
@@ -48,9 +56,16 @@ public class MainMenuManager : MonoBehaviour
         panelMainMenu.interactable = true;
         panelMainMenu.blocksRaycasts = true;
 
+        // panelHidden TIDAK di-nonaktifkan di sini -> defaultnya tetap tampil saat start.
+
         if (panelCredits != null)
         {
             panelCredits.SetActive(false);
+        }
+
+        if (panelSettings != null)
+        {
+            panelSettings.SetActive(false);
         }
     }
 
@@ -129,5 +144,47 @@ public class MainMenuManager : MonoBehaviour
 
         if (panelMainMenu != null)
             panelMainMenu.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// Assign method ini ke Button "ButtonSettings" -> OnClick() di Inspector.
+    /// Membuka panel Settings dan menyembunyikan image panelHidden.
+    /// </summary>
+    public void OnSettingsClicked()
+    {
+        panelMainMenu.gameObject.SetActive(false);
+        panelSettings.SetActive(true);
+
+        if (panelHidden != null)
+            panelHidden.SetActive(false);
+    }
+
+    /// <summary>
+    /// Assign method ini ke Button "ButtonBack" (di dalam PanelSettings) -> OnClick() di Inspector.
+    /// Menutup panel Settings dan menampilkan lagi image panelHidden.
+    /// </summary>
+    public void OnCloseSettingsClicked()
+    {
+        panelSettings.SetActive(false);
+        panelMainMenu.gameObject.SetActive(true);
+
+        if (panelHidden != null)
+            panelHidden.SetActive(true);
+    }
+
+    /// <summary>
+    /// Bisa dipanggil dari script lain (misal SettingsController) untuk menutup
+    /// panel Settings dan kembali ke Main Menu secara programatis.
+    /// </summary>
+    public void CloseSettings()
+    {
+        if (panelSettings != null)
+            panelSettings.SetActive(false);
+
+        if (panelMainMenu != null)
+            panelMainMenu.gameObject.SetActive(true);
+
+        if (panelHidden != null)
+            panelHidden.SetActive(true);
     }
 }
