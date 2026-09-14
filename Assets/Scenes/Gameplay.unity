@@ -260,6 +260,7 @@ MonoBehaviour:
   heightAboveObjective: 2
   screenEdgePadding: 80
   objectiveDistance: 10
+  minimumDirection: 0.01
 --- !u!1 &131440841
 GameObject:
   m_ObjectHideFlags: 0
