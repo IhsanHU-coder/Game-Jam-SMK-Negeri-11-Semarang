@@ -31,10 +31,14 @@ public class CutTree : MonoBehaviour
     [Header("Particle")]
     public ParticleSystem[] cutParticles;
 
+    public GameObject Axe;
+    public Animator axeAnimator;
+
     private void Awake()
     {
         if (infoLogging != null)
         {
+            Axe.SetActive(false);
             infoLogging.SetActive(false);
         }
     }
@@ -46,11 +50,19 @@ public class CutTree : MonoBehaviour
 
     private void CheckPlayerDistance()
     {
+
+        
+        
         if (player == null)
         {
             if (infoLogging != null)
             {
                 infoLogging.SetActive(false);
+            }
+
+            if (Axe != null)
+            {
+                Axe.SetActive(false);
             }
 
             return;
@@ -60,11 +72,13 @@ public class CutTree : MonoBehaviour
             transform.position,
             player.position
         );
+        
 
         if (distance <= cutRange)
         {
             if (infoLogging != null)
             {
+                Axe.SetActive(true);
                 infoLogging.SetActive(true);
             }
         }
@@ -72,6 +86,7 @@ public class CutTree : MonoBehaviour
         {
             if (infoLogging != null)
             {
+                Axe.SetActive(false);
                 infoLogging.SetActive(false);
             }
         }
@@ -79,6 +94,7 @@ public class CutTree : MonoBehaviour
 
     public void TakeDamage()
     {
+        axeAnimator.Play("AxeClick"); 
         int damage = Random.Range(minDamage, maxDamage + 1);
 
         treeHealth -= damage;
@@ -95,6 +111,7 @@ public class CutTree : MonoBehaviour
 
         if (treeHealth <= 0)
         {
+            Axe.SetActive(false);
             infoLogging.SetActive(false);
             CutDownTree();
         }
