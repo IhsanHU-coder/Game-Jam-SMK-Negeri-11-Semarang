@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 
-
 public static class LogPickupTracker
 {
     public static int TotalSpawned { get; private set; }
@@ -13,15 +12,29 @@ public static class LogPickupTracker
         ResetTracker();
     }
 
-    public static void RegisterPickup()
+    // Dipanggil saat log muncul di tanah
+    public static void RegisterSpawnedLog()
     {
         TotalSpawned++;
         RemainingOnGround++;
+
+        Debug.Log(
+            $"[LogPickupTracker] Log muncul. " +
+            $"Total: {TotalSpawned}, " +
+            $"Sisa di tanah: {RemainingOnGround}"
+        );
     }
 
+    // Dipanggil saat log diambil player
     public static void ReportPickedUp()
     {
-        if (RemainingOnGround > 0) RemainingOnGround--;
+        if (RemainingOnGround > 0)
+            RemainingOnGround--;
+
+        Debug.Log(
+            $"[LogPickupTracker] Log diambil. " +
+            $"Sisa di tanah: {RemainingOnGround}"
+        );
     }
 
     public static void ResetTracker()
