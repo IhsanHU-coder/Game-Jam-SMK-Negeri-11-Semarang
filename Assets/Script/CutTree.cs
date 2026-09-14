@@ -25,11 +25,18 @@ public class CutTree : MonoBehaviour
     [SerializeField] private GameObject normalTree;
     [SerializeField] private GameObject cutTree;
 
+    [Header("Particle")]
+    public ParticleSystem[] cutParticles;
+
     public void TakeDamage()
     {
         int damage = Random.Range(minDamage, maxDamage + 1);
 
         treeHealth -= damage;
+        foreach (var particle in cutParticles)
+        {
+            particle.Play();
+        }
 
         Debug.Log(
             "Tree took " + damage +
