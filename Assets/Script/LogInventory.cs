@@ -25,15 +25,19 @@ public class LogInventory : MonoBehaviour
 
         currentLogs++;
 
-        Debug.Log("Logs: " + currentLogs + "/" + maxLogs);
+        Debug.Log("Player Logs: " + currentLogs + "/" + maxLogs);
 
         return true;
     }
 
-    public void RemoveAllLogs()
+    public int RemoveAllLogs()
     {
+        int logsToStore = currentLogs;
+
         currentLogs = 0;
 
-        Debug.Log("Semua log sudah ditaruh. Logs: 0/" + maxLogs);
+        Debug.Log("Player menyimpan " + logsToStore + " logs.");
+
+        return logsToStore;
     }
 }

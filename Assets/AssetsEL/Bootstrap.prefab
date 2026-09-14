@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5966291093401696024}
   - component: {fileID: 4635407579844553075}
   - component: {fileID: 2432147110097031097}
+  - component: {fileID: 8162482341736569329}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -72,4 +73,41 @@ MonoBehaviour:
   - id: ButtonHover
     clip: {fileID: 8300000, guid: 3b3cd2294ddc7a744b705ff5164a4873, type: 3}
     volume: 1
-  poolSize: 8
+  - id: HitTree
+    clip: {fileID: 8300000, guid: 0a99a13fcd8b7d34199e0b55729e9e09, type: 3}
+    volume: 1
+  - id: DestroyTree
+    clip: {fileID: 8300000, guid: 1f6d4925c864be74bb199cd2ef56af5e, type: 3}
+    volume: 1
+  - id: LogPickup
+    clip: {fileID: 8300000, guid: 3b3cd2294ddc7a744b705ff5164a4873, type: 3}
+    volume: 1
+  - id: Footstep
+    clip: {fileID: 8300000, guid: 8b897de62e2c08d4e89b2cd2753edced, type: 3}
+    volume: 0.172
+  - id: CraftingClose
+    clip: {fileID: 8300000, guid: b75f0a5e698e38d499797fc8847ae3f2, type: 3}
+    volume: 1
+  - id: CraftingOpen
+    clip: {fileID: 8300000, guid: bfde9b67a7eb04e4d95549ffdf45dd5b, type: 3}
+    volume: 1
+  - id: UpgradeSuccess
+    clip: {fileID: 8300000, guid: 1e4abaea3c249744385bc43769c4e968, type: 3}
+    volume: 1
+  - id: UpgradeFail
+    clip: {fileID: 8300000, guid: 0ccfcdc0c9ac0b2409c7dfb168025d8f, type: 3}
+    volume: 1
+  poolSize: 1
+--- !u!114 &8162482341736569329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6103096433037804312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6ad9ee9c2efcc04e8e2e066f79a0f63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CursorManager
+  cursorTexture: {fileID: -8328923581568760697, guid: 3357399ca3d2c01408e5698948e52158, type: 3}

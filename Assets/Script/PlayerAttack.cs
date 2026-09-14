@@ -9,53 +9,18 @@ public class PlayerAttack : MonoBehaviour
     public InputManager inputManager;
     private Camera mainCamera;
 
-    public GameObject infoLogging;
-
     private void Awake()
     {
         mainCamera = Camera.main;
-
-        if (infoLogging != null)
-            infoLogging.SetActive(false);
     }
 
     private void Update()
     {
-        CheckTreeRange();
-
         if (inputManager.AttackPressed)
         {
             Attack();
 
             inputManager.ResetAttack();
-        }
-    }
-
-    private void CheckTreeRange()
-    {
-        // Cari semua Collider2D di sekitar Player
-        Collider2D[] hits = Physics2D.OverlapCircleAll(
-            transform.position,
-            attackRange
-        );
-
-        bool treeInRange = false;
-
-        foreach (Collider2D hit in hits)
-        {
-            CutTree tree = hit.GetComponentInParent<CutTree>();
-
-            if (tree != null)
-            {
-                treeInRange = true;
-                break;
-            }
-        }
-
-        // Nyalakan/matikan info
-        if (infoLogging != null)
-        {
-            infoLogging.SetActive(treeInRange);
         }
     }
 
