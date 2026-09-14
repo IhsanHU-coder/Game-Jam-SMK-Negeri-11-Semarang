@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 /// Mengatur MainMenu: klik Play -> PanelMainMenu fade out sambil loading screen (persistent,
 /// lihat LoadingScreenController) fade in -> load scene Gameplay -> setelah siap, loading
 /// screen fade out -> delay sekian detik -> scene MainMenu ini di-unload.
+/// Juga mengatur buka/tutup Panel Credits.
 ///
 /// SETUP DI INSPECTOR:
 /// - PanelMainMenu butuh komponen CanvasGroup (Add Component > Canvas Group).
@@ -12,11 +13,21 @@ using UnityEngine.SceneManagement;
 ///   sebelum tombol Play ditekan.
 /// - OnClick() Button "ButtonPlayContinueGame" -> OnPlayClicked().
 /// - OnClick() Button "ButtonExit" -> OnExitClicked().
+/// - OnClick() Button "ButtonCredits" -> OnCreditsClicked().
+/// - OnClick() Button "ButtonBack" (di dalam PanelCredits) -> OnBackClicked().
 /// </summary>
 public class MainMenuManager : MonoBehaviour
 {
+    /// <summary>
+    /// Singleton instance, supaya script lain (misal CreditsScroller) bisa
+    /// manggil MainMenuManager.Instance.CloseCredits() dsb.
+    /// </summary>
+    public static MainMenuManager Instance { get; private set; }
+
     [Header("References")]
     [SerializeField] private CanvasGroup panelMainMenu;
+    [Tooltip("GameObject panel Credits, defaultnya nonaktif.")]
+    [SerializeField] private GameObject panelCredits;
 
     [Header("Scene Settings")]
     [Tooltip("Nama scene Gameplay yang akan di-load (harus sudah masuk Build Settings).")]
@@ -31,10 +42,24 @@ public class MainMenuManager : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         panelMainMenu.alpha = 1f;
         panelMainMenu.interactable = true;
         panelMainMenu.blocksRaycasts = true;
+
+        if (panelCredits != null)
+        {
+            panelCredits.SetActive(false);
+        }
     }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+    }
+
     public void LateUpdate()
     {
         panelMainMenu.alpha = 1f;
@@ -46,21 +71,21 @@ public class MainMenuManager : MonoBehaviour
     /// Assign method ini ke Button "ButtonPlayContinueGame" -> OnClick() di Inspector.
     /// </summary>
     public void OnPlayClicked()
-{
-    if (LoadingScreenController.Instance == null)
     {
-        Debug.LogError("LoadingScreenController tidak ditemukan!");
-        return;
+        if (LoadingScreenController.Instance == null)
+        {
+            Debug.LogError("LoadingScreenController tidak ditemukan!");
+            return;
+        }
+
+        LoadingScreenController.Instance.LoadScene(
+            gameplaySceneName,
+            LoadSceneMode.Single,
+            panelMainMenu
+        );
+
+        Canvas.SetActive(false);
     }
-
-    LoadingScreenController.Instance.LoadScene(
-        gameplaySceneName,
-        LoadSceneMode.Single,
-        panelMainMenu
-    );
-
-    Canvas.SetActive(false);
-}
 
     /// <summary>
     /// Assign method ini ke Button "ButtonExit" -> OnClick() di Inspector.
@@ -72,5 +97,37 @@ public class MainMenuManager : MonoBehaviour
 #else
         Application.Quit();
 #endif
+    }
+
+    /// <summary>
+    /// Assign method ini ke Button "ButtonCredits" -> OnClick() di Inspector.
+    /// </summary>
+    public void OnCreditsClicked()
+    {
+        panelMainMenu.gameObject.SetActive(false);
+        panelCredits.SetActive(true);
+    }
+
+    /// <summary>
+    /// Assign method ini ke Button "ButtonBack" (di dalam PanelCredits) -> OnClick() di Inspector.
+    /// </summary>
+    public void OnBackClicked()
+    {
+        panelCredits.SetActive(false);
+        panelMainMenu.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// Dipanggil dari CreditsScroller (via MainMenuManager.Instance.CloseCredits())
+    /// saat credits sudah selesai scroll atau ditutup manual (tombol Back/BackToMenu).
+    /// Menyembunyikan panel Credits dan menampilkan lagi panel Main Menu.
+    /// </summary>
+    public void CloseCredits()
+    {
+        if (panelCredits != null)
+            panelCredits.SetActive(false);
+
+        if (panelMainMenu != null)
+            panelMainMenu.gameObject.SetActive(true);
     }
 }
