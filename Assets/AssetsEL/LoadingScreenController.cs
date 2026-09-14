@@ -1,9 +1,9 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using TMPro;
 
 /// <summary>
 /// Loading screen persistent (DontDestroyOnLoad) yang bisa dipanggil dari scene manapun
@@ -36,20 +36,27 @@ public class LoadingScreenController : MonoBehaviour
 
     private Coroutine fillRoutine;
     private Coroutine dotRoutine;
+    public GameObject loadingScreen;
+    public GameObject LoadScreen2;
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(loadingScreen);
+        
 
         panelLoading.alpha = 0f;
         panelLoading.interactable = false;
         panelLoading.blocksRaycasts = false;
+    }
+    void LateUpdate()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(loadingScreen);
+            return;
+        }
     }
 
     /// <summary>
@@ -92,6 +99,7 @@ public class LoadingScreenController : MonoBehaviour
             yield return StartCoroutine(Fade(panelLoading, panelLoading.alpha, 1f, fadeInDuration));
         }
         panelLoading.interactable = true;
+        
 
         // 2. Mulai animasi loading (dot text + fill image), looping sampai dihentikan.
         fillRoutine = StartCoroutine(AnimateLoadingFill());
@@ -118,18 +126,29 @@ public class LoadingScreenController : MonoBehaviour
         // 4. Hentikan animasi loading.
         if (fillRoutine != null) StopCoroutine(fillRoutine);
         if (dotRoutine != null) StopCoroutine(dotRoutine);
+        
 
         // 5. Fade out loading screen.
-        panelLoading.interactable = false;
-        yield return StartCoroutine(Fade(panelLoading, panelLoading.alpha, 0f, fadeOutDuration));
-        panelLoading.blocksRaycasts = false;
+        // panelLoading.interactable = false;
+        // yield return StartCoroutine(Fade(panelLoading, panelLoading.alpha, 0f, fadeOutDuration));
+        // panelLoading.blocksRaycasts = false;
 
-        // 6. Kalau ada scene lama yang perlu di-unload manual (mode Additive), tunggu delay lalu unload.
-        if (sceneToUnloadAfterLoad.HasValue)
-        {
-            yield return new WaitForSeconds(delayBeforeUnload);
-            SceneManager.UnloadSceneAsync(sceneToUnloadAfterLoad.Value);
-        }
+        // // 6. Kalau ada scene lama yang perlu di-unload manual (mode Additive), tunggu delay lalu unload.
+        // if (sceneToUnloadAfterLoad.HasValue)
+        // {
+        //     yield return new WaitForSeconds(delayBeforeUnload);
+        //     SceneManager.UnloadSceneAsync(sceneToUnloadAfterLoad.Value);
+        // }
+        panelLoading.interactable = false;
+
+        yield return StartCoroutine(
+            Fade(panelLoading, panelLoading.alpha, 0f, fadeOutDuration)
+        );
+        LoadScreen2.SetActive(false);
+        // Pastikan loading screen benar-benar tidak menghalangi UI
+        panelLoading.alpha = 0f;
+        panelLoading.interactable = false;
+        panelLoading.blocksRaycasts = false;
     }
 
     /// <summary>

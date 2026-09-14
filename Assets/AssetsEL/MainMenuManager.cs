@@ -24,11 +24,18 @@ public class MainMenuManager : MonoBehaviour
     [Tooltip("Aktifkan jika MainMenu di-load bareng Gameplay secara additive, lalu MainMenu " +
              "akan di-unload manual setelah loading selesai. Kalau dimatikan, scene akan " +
              "diganti langsung (Single) tanpa perlu unload manual.")]
-    [SerializeField] private bool loadAdditive = true;
+    [SerializeField] private bool loadAdditive = false;
     [Tooltip("Jeda (detik) setelah loading screen fade out selesai, sebelum scene MainMenu di-unload.")]
     [SerializeField] private float delayBeforeUnloadMainMenu = 2f;
+    public GameObject Canvas;
 
     private void Awake()
+    {
+        panelMainMenu.alpha = 1f;
+        panelMainMenu.interactable = true;
+        panelMainMenu.blocksRaycasts = true;
+    }
+    public void LateUpdate()
     {
         panelMainMenu.alpha = 1f;
         panelMainMenu.interactable = true;
@@ -39,17 +46,21 @@ public class MainMenuManager : MonoBehaviour
     /// Assign method ini ke Button "ButtonPlayContinueGame" -> OnClick() di Inspector.
     /// </summary>
     public void OnPlayClicked()
+{
+    if (LoadingScreenController.Instance == null)
     {
-        LoadSceneMode mode = loadAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single;
-        Scene? sceneToUnload = loadAdditive ? gameObject.scene : (Scene?)null;
-
-        LoadingScreenController.Instance.LoadScene(
-            gameplaySceneName,
-            mode,
-            panelMainMenu,
-            sceneToUnload,
-            delayBeforeUnloadMainMenu);
+        Debug.LogError("LoadingScreenController tidak ditemukan!");
+        return;
     }
+
+    LoadingScreenController.Instance.LoadScene(
+        gameplaySceneName,
+        LoadSceneMode.Single,
+        panelMainMenu
+    );
+
+    Canvas.SetActive(false);
+}
 
     /// <summary>
     /// Assign method ini ke Button "ButtonExit" -> OnClick() di Inspector.

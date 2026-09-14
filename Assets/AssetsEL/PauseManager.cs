@@ -29,6 +29,7 @@ public class PauseManager : MonoBehaviour
     private bool isReturningToMenu; // guard supaya tombol tidak bisa dipencet dobel saat sedang loading
 
     public bool IsPaused => isPaused;
+    private LoadingScreenController loadControl;
 
     private void Awake()
     {
@@ -39,6 +40,7 @@ public class PauseManager : MonoBehaviour
             return;
         }
         Instance = this;
+        loadControl = LoadingScreenController.Instance;
     }
 
     private void OnEnable()
@@ -83,23 +85,25 @@ public class PauseManager : MonoBehaviour
     }
 
     public void PauseGame()
-{
-    isPaused = true;
-    if (pausePanel != null)
-        pausePanel.SetActive(true);
-
-    Time.timeScale = 0f;
-
-    if (inputManager != null)
     {
-        Debug.Log("Disabling player input...");
-        inputManager.DisablePlayerInput();
+        isPaused = true;
+        if (pausePanel != null)
+            pausePanel.SetActive(true);
+
+        Time.timeScale = 0f;
+
+        if (inputManager != null)
+        {
+            // Debug.Log("Disabling player input...");
+            inputManager.OnDisable();
+
+        }
+        else
+        {
+
+            Debug.LogWarning("inputManager is NULL! Assign it in Inspector.");
+        }
     }
-    else
-    {
-        Debug.LogWarning("inputManager is NULL! Assign it in Inspector.");
-    }
-}
 
     /// <summary>
     /// Panggil dari OnClick tombol "Resume" di Inspector.
@@ -114,7 +118,7 @@ public class PauseManager : MonoBehaviour
 
         // Nyalakan lagi input gameplay
         if (inputManager != null)
-            inputManager.EnablePlayerInput();
+            inputManager.OnEnable();
     }
 
     /// <summary>
@@ -136,11 +140,26 @@ public class PauseManager : MonoBehaviour
             ? pausePanel.GetComponent<CanvasGroup>()
             : null;
 
+        LoadingScreenController load = LoadingScreenController.Instance;
+
         // mode Single -> scene Gameplay otomatis diganti, tidak perlu unload manual.
-        LoadingScreenController.Instance.LoadScene(
+        // LoadingScreenController.Instance.LoadScene(
+        //     mainMenuSceneName,
+        //     LoadSceneMode.Single,
+        //     pauseCanvasGroup);
+        if (load == null)
+        {
+            Debug.LogError("LoadingScreenController tidak ditemukan!");
+            isReturningToMenu = false;
+            return;
+        }
+
+        load.LoadScene(
             mainMenuSceneName,
             LoadSceneMode.Single,
-            pauseCanvasGroup);
+            pauseCanvasGroup
+        );
+        loadControl.LoadScreen2.SetActive(true);
     }
 
     /// <summary>

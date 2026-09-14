@@ -29,6 +29,7 @@ public class InputManager : MonoBehaviour, IPlayerActions
         playerInputAction = new InputSystem_Actions();
 
         playerInputAction.Player.SetCallbacks(this);
+        
 
         if (cinemachineCamera != null)
         {
@@ -37,13 +38,18 @@ public class InputManager : MonoBehaviour, IPlayerActions
             ) as CinemachineBasicMultiChannelPerlin;
         }
     }
+    public void Start()
+    {
+        OnEnable();
+        AttackPressed = true;
+    }
 
-    private void OnEnable()
+    public void OnEnable()
     {
         playerInputAction.Player.Enable();
     }
 
-    private void OnDisable()
+    public void OnDisable()
     {
         playerInputAction.Player.Disable();
     }
@@ -57,11 +63,11 @@ public class InputManager : MonoBehaviour, IPlayerActions
     public void DisablePlayerInput()
     {
         // Reset state supaya nggak "nyangkut" true saat re-enable nanti
-        MoveInput = Vector2.zero;
-        RunInput = false;
-        AttackPressed = false;
+        // MoveInput = Vector2.zero;
+        // RunInput = false;
+        // AttackPressed = false;
 
-        playerInputAction.Player.Disable();
+        // playerInputAction.Player.Disable();
     }
 
     public bool IsPlayerInputEnabled()
