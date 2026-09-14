@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d1e02650c4abe46edbb14142644e2482
+guid: dd202b0b42ee8b6448c4fb18780efa46
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -102,7 +102,7 @@ ScriptedImporter:
     generateIndividualEvents: 1
     generateSpriteAtlas: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639250440849569017
+  platformSettingsDirtyTick: 639250418516716603
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -138,8 +138,8 @@ ScriptedImporter:
       x: 4
       y: 4
       width: 16
-      height: 24
-    spriteID: a4e35afd3f7d64a3f97d45ea339d45af
+      height: 21
+    spriteID: f646fd8f4c6e9814abb3b0a32662a60c
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -159,8 +159,8 @@ ScriptedImporter:
       x: 28
       y: 4
       width: 16
-      height: 23
-    spriteID: 60f9f0312b7624bbe9cfde9fad3169ad
+      height: 20
+    spriteID: 34784b5964ddcb443b8d0bfaf622d444
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -178,10 +178,10 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 28
-      y: 36
+      y: 33
       width: 16
-      height: 22
-    spriteID: 4ca7ddc134bc64fcda965395e4e130ea
+      height: 19
+    spriteID: 6fef75e0115a5f549bac57984fe497fe
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -189,7 +189,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 28, y: 36}
+    uvTransform: {x: 28, y: 33}
   - name: Frame_3
     originalName: 
     pivot: {x: 0.5, y: 0}
@@ -199,10 +199,10 @@ ScriptedImporter:
     rect:
       serializedVersion: 2
       x: 4
-      y: 36
+      y: 33
       width: 16
-      height: 23
-    spriteID: da95404990c7744f796e52a151c5dbaa
+      height: 20
+    spriteID: fe5d960a46e790545964127bba946397
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -210,18 +210,18 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 4, y: 36}
+    uvTransform: {x: 4, y: 33}
   spriteSheetImportData: []
   tileSetImportData: []
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 2600515240
+      value0: 3975632424
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: MC_WalkRight
+    name: NPC5
     layerFlags: 0
     layerType: 0
     blendMode: 0
@@ -233,8 +233,8 @@ ScriptedImporter:
         x: 8
         y: 0
         width: 16
-        height: 24
-      spriteId: a4e35afd3f7d64a3f97d45ea339d45af
+        height: 21
+      spriteId: f646fd8f4c6e9814abb3b0a32662a60c
     - name: Frame_1
       frameIndex: 1
       additiveSortOrder: 0
@@ -242,8 +242,8 @@ ScriptedImporter:
         x: 8
         y: 0
         width: 16
-        height: 23
-      spriteId: 60f9f0312b7624bbe9cfde9fad3169ad
+        height: 20
+      spriteId: 34784b5964ddcb443b8d0bfaf622d444
     - name: Frame_2
       frameIndex: 2
       additiveSortOrder: 0
@@ -251,8 +251,8 @@ ScriptedImporter:
         x: 8
         y: 0
         width: 16
-        height: 22
-      spriteId: 4ca7ddc134bc64fcda965395e4e130ea
+        height: 19
+      spriteId: 6fef75e0115a5f549bac57984fe497fe
     - name: Frame_3
       frameIndex: 3
       additiveSortOrder: 0
@@ -260,8 +260,8 @@ ScriptedImporter:
         x: 8
         y: 0
         width: 16
-        height: 23
-      spriteId: da95404990c7744f796e52a151c5dbaa
+        height: 20
+      spriteId: fe5d960a46e790545964127bba946397
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
@@ -281,42 +281,6 @@ ScriptedImporter:
     allowsAlphaSplitting: 0
     androidETC2FallbackOverride: 0
   - name: Standalone
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 16384
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
-  - name: Android
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 16384
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
-  - name: iPhone
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 16384
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
-  - name: WebGL
     overridden: 0
     ignorePlatformSupport: 0
     maxTextureSize: 16384
