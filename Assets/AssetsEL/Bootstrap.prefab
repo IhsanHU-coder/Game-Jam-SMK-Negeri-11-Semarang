@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5966291093401696024}
   - component: {fileID: 4635407579844553075}
+  - component: {fileID: 2432147110097031097}
   m_Layer: 0
   m_Name: Bootstrap
   m_TagString: Untagged
@@ -51,3 +52,24 @@ MonoBehaviour:
   - MusicVolume
   maxSliderValue: 10
   defaultValue: 10
+--- !u!114 &2432147110097031097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6103096433037804312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 048333514671fd041ab852af88f5ee5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  sfxMixerGroup: {fileID: 656154731673539695, guid: 4bacdedb85508144b8a7ee090bcdd501, type: 2}
+  sounds:
+  - id: ButtonClick
+    clip: {fileID: 8300000, guid: f2b404d9145a85842aedc3ad82b35335, type: 3}
+    volume: 1
+  - id: ButtonHover
+    clip: {fileID: 8300000, guid: 3b3cd2294ddc7a744b705ff5164a4873, type: 3}
+    volume: 1
+  poolSize: 8
