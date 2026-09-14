@@ -6,7 +6,7 @@ public static class SeedInventory
     private static int seedCount = 0;
 
  
-    public static int MaxSeedCount = 5;
+    public static int MaxSeedCount = 3;
 
     public static int SeedCount
     {

@@ -8,6 +8,9 @@ public class InteractZone : MonoBehaviour
     [Tooltip("Tag GameObject player, dipakai untuk mencari & mengecek jaraknya ke zona ini")]
     public string playerTag = "Player";
 
+    [Tooltip("Titik acuan KAKI player (child object kosong di posisi kaki). Kalau kosong, pakai transform player langsung. Samakan dengan yang dipakai di FarmingManager.")]
+    public Transform playerFeet;
+
     [Tooltip("Warna lingkaran gizmo di Scene view")]
     public Color gizmoColor = Color.white;
 
@@ -24,6 +27,13 @@ public class InteractZone : MonoBehaviour
         if (playerObj != null)
         {
             playerTransform = playerObj.transform;
+
+            // Kalau playerFeet belum di-assign manual, coba cari child bernama "FeetPoint" otomatis
+            if (playerFeet == null)
+            {
+                Transform autoFeet = playerObj.transform.Find("FeetPoint");
+                if (autoFeet != null) playerFeet = autoFeet;
+            }
         }
         else
         {
@@ -41,7 +51,9 @@ public class InteractZone : MonoBehaviour
             return;
         }
 
-        float distance = Vector2.Distance(transform.position, playerTransform.position);
+        Vector3 referencePos = playerFeet != null ? playerFeet.position : playerTransform.position;
+
+        float distance = Vector2.Distance(transform.position, referencePos);
         IsPlayerInRange = distance <= radius;
     }
 

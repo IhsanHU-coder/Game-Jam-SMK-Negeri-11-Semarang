@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b6b384b0172acfe45a51e86847b654b8
+guid: 38d45badc1daadc418c123ea2bfc8b0f
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -102,7 +102,7 @@ ScriptedImporter:
     generateIndividualEvents: 1
     generateSpriteAtlas: 1
   importFileNodeState: 1
-  platformSettingsDirtyTick: 639249934598372888
+  platformSettingsDirtyTick: 639250245353385666
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -127,9 +127,9 @@ ScriptedImporter:
     tessellationDetail: 0
     uvTransform: {x: 0, y: 0}
   animatedSpriteImportData:
-  - name: fertileSoilWithPlant 1
+  - name: fertileSoilWithPlant 2
     originalName: 
-    pivot: {x: 0.5, y: 0.36842105}
+    pivot: {x: 0.5, y: 0.3888889}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     customData: 
@@ -138,8 +138,8 @@ ScriptedImporter:
       x: 4
       y: 4
       width: 24
-      height: 19
-    spriteID: e41507870fc621047a975b63ffd3aba0
+      height: 18
+    spriteID: 14ecdf5c3c067c745bebda36fe1028a5
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -153,25 +153,25 @@ ScriptedImporter:
   asepriteLayers:
   - layerIndex: 0
     uuid:
-      value0: 1536291622
+      value0: 3102375563
       value1: 0
       value2: 0
       value3: 0
     guid: 0
-    name: fertileSoilWithPlant 1
+    name: fertileSoilWithPlant 2
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: fertileSoilWithPlant 1
+    - name: fertileSoilWithPlant 2
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
         x: 4
         y: 9
         width: 24
-        height: 19
-      spriteId: e41507870fc621047a975b63ffd3aba0
+        height: 18
+      spriteId: 14ecdf5c3c067c745bebda36fe1028a5
     linkedCells: []
     tileCells: []
     tileSetIndex: 0
