@@ -18,6 +18,12 @@ public class WellRefill : MonoBehaviour
     [Header("Player Movement")]
     [SerializeField] private PlayerMovement playerMovement;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource refillAudioSource; // drag AudioSource khusus di sini
+    [SerializeField] private AudioClip refillSoundClip;
+
+    private bool isRefillSoundPlaying = false;
+
     private InteractZone interactZone;
 
     private GameObject refillSliderInstance;
@@ -125,63 +131,82 @@ public class WellRefill : MonoBehaviour
     // START REFILL
     // =========================================================
     private void StartRefill()
+{
+    if (!enabledByPhase)
+        return;
+
+    if (WaterInventory.IsFull)
+        return;
+
+    isRefilling = true;
+    refillTime = 0f;
+
+    // KUNCI GERAK PLAYER
+    if (playerMovement != null)
+        playerMovement.SetMovementLocked(true);
+
+    HidePickupIcon();
+
+    ShowRefillSlider();
+    UpdateRefillSlider();
+
+    // Mainkan suara refill (looping selama proses berlangsung)
+    if (refillAudioSource != null && refillSoundClip != null)
     {
-        if (!enabledByPhase)
-            return;
-
-        if (WaterInventory.IsFull)
-            return;
-
-        isRefilling = true;
-        refillTime = 0f;
-
-        // KUNCI GERAK PLAYER
-        if (playerMovement != null)
-            playerMovement.SetMovementLocked(true);
-
-        HidePickupIcon();
-
-        ShowRefillSlider();
-        UpdateRefillSlider();
+        refillAudioSource.clip = refillSoundClip;
+        refillAudioSource.Play();
     }
+}
 
     // =========================================================
     // CANCEL REFILL
     // =========================================================
-    private void CancelRefill()
+   private void CancelRefill()
+{
+    if (!isRefilling)
+        return;
+
+    isRefilling = false;
+
+    // Reset dari awal
+    refillTime = 0f;
+
+    HideRefillSlider();
+
+    // BUKA GERAK PLAYER LAGI
+    if (playerMovement != null)
+        playerMovement.SetMovementLocked(false);
+
+    // Hentikan suara refill langsung, tanpa nunggu selesai
+    if (refillAudioSource != null && refillAudioSource.isPlaying)
     {
-        if (!isRefilling)
-            return;
-
-        isRefilling = false;
-
-        // Reset dari awal
-        refillTime = 0f;
-
-        HideRefillSlider();
-
-        // BUKA GERAK PLAYER LAGI
-        if (playerMovement != null)
-            playerMovement.SetMovementLocked(false);
+        refillAudioSource.Stop();
     }
+}
 
     // =========================================================
     // COMPLETE REFILL
     // =========================================================
     private void CompleteRefill()
+{
+    isRefilling = false;
+    refillTime = 0f;
+
+    // Isi air langsung sampai MAX
+    WaterInventory.FillWater();
+
+    HideRefillSlider();
+
+    // BUKA GERAK PLAYER LAGI
+    if (playerMovement != null)
+        playerMovement.SetMovementLocked(false);
+
+    // Hentikan suara refill (proses sudah selesai)
+    if (refillAudioSource != null && refillAudioSource.isPlaying)
     {
-        isRefilling = false;
-        refillTime = 0f;
-
-        // Isi air langsung sampai MAX
-        WaterInventory.FillWater();
-
-        HideRefillSlider();
-
-        // BUKA GERAK PLAYER LAGI
-        if (playerMovement != null)
-            playerMovement.SetMovementLocked(false);
+        refillAudioSource.Stop();
     }
+}
 
     // =========================================================
     // PICKUP ICON

@@ -14,6 +14,10 @@ public class SeedPickup : MonoBehaviour
     [Tooltip("Icon yang muncul saat player berada dekat Seed Box.")]
     public GameObject pickupIcon;
 
+    [Header("Audio")]
+    [SerializeField] private string collectSoundId = "SeedCollect";
+    [SerializeField] private string collectFailSoundId = "SeedCollectFail";
+
     private InteractZone interactZone;
 
     // Dikontrol oleh FarmingManager
@@ -66,12 +70,23 @@ public class SeedPickup : MonoBehaviour
         if (SeedInventory.IsFull)
         {
             Debug.Log($"[SeedPickup] Biji sudah penuh! Maksimal {SeedInventory.MaxSeedCount} biji.");
+
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX(collectFailSoundId);
+            }
+
             return; // tidak menambah apapun jika sudah penuh
         }
 
         SeedInventory.SeedCount += seedAmountPerClick; // otomatis ke-clamp ke MaxSeedCount di SeedInventory
 
         Debug.Log($"[SeedPickup] Mengambil biji. Total sekarang: {SeedInventory.SeedCount}/{SeedInventory.MaxSeedCount}");
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(collectSoundId);
+        }
 
         if (destroyAfterPickup)
         {
