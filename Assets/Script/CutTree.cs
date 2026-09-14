@@ -29,6 +29,10 @@ public class CutTree : MonoBehaviour
     [Header("Particle")]
     public ParticleSystem[] cutParticles;
 
+    [Header("Audio")]
+    [SerializeField] private string treeHitSoundId = "TreeHit";
+    [SerializeField] private string treeFallSoundId = "TreeFall";
+
     public GameObject Axe;
     public Animator axeAnimator;
 
@@ -106,6 +110,12 @@ public class CutTree : MonoBehaviour
         int damage = Random.Range(min, max + 1);
         treeHealth -= damage;
 
+        // Mainkan suara kena tebas lewat AudioManager
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(treeHitSoundId);
+        }
+
         foreach (var particle in cutParticles)
         {
             if (particle != null)
@@ -126,6 +136,12 @@ public class CutTree : MonoBehaviour
     {
         if (normalTree != null) normalTree.SetActive(false);
         if (cutTree != null) cutTree.SetActive(true);
+
+        // Mainkan suara pohon tumbang lewat AudioManager
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(treeFallSoundId);
+        }
 
         int logAmount = Random.Range(minLogs, maxLogs + 1);
 

@@ -14,6 +14,12 @@ public class CraftingStation : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private LogStorage logStorage;
 
+    [Header("Audio")]
+    [SerializeField] private string openSoundId = "CraftingOpen";
+    [SerializeField] private string closeSoundId = "CraftingClose";
+    [SerializeField] private string upgradeSuccessSoundId = "UpgradeSuccess";
+    [SerializeField] private string upgradeFailSoundId = "UpgradeFail";
+
     private PlayerStats playerStats;
     private bool isPlayerInRange = false;
     private bool isCraftingOpen = false;
@@ -87,6 +93,11 @@ public class CraftingStation : MonoBehaviour
         isCraftingOpen = true;
         if (craftingPanel != null) craftingPanel.SetActive(true);
         if (infoCrafting != null) infoCrafting.SetActive(false);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(openSoundId);
+        }
     }
 
     public void CloseCrafting()
@@ -94,6 +105,11 @@ public class CraftingStation : MonoBehaviour
         isCraftingOpen = false;
         if (craftingPanel != null) craftingPanel.SetActive(false);
         if (infoCrafting != null) infoCrafting.SetActive(isPlayerInRange);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(closeSoundId);
+        }
     }
 
     // ==========================================
@@ -113,10 +129,21 @@ public class CraftingStation : MonoBehaviour
             }
             Debug.Log($"Upgrade Berhasil! Min Damage: {newMinDamage}, Max Damage: {newMaxDamage}");
 
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlaySFX(upgradeSuccessSoundId);
+            }
+
             return true; // Pembelian BERHASIL
         }
 
         Debug.Log("Upgrade Gagal: Log tidak cukup!");
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(upgradeFailSoundId);
+        }
+
         return false; // Pembelian GAGAL
     }
 
