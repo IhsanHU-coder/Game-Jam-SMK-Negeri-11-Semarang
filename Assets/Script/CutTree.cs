@@ -25,14 +25,64 @@ public class CutTree : MonoBehaviour
     [SerializeField] private GameObject normalTree;
     [SerializeField] private GameObject cutTree;
 
+    [Header("Info")]
+    [SerializeField] private GameObject infoLogging;
+
     [Header("Particle")]
     public ParticleSystem[] cutParticles;
+
+    private void Awake()
+    {
+        if (infoLogging != null)
+        {
+            infoLogging.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        CheckPlayerDistance();
+    }
+
+    private void CheckPlayerDistance()
+    {
+        if (player == null)
+        {
+            if (infoLogging != null)
+            {
+                infoLogging.SetActive(false);
+            }
+
+            return;
+        }
+
+        float distance = Vector2.Distance(
+            transform.position,
+            player.position
+        );
+
+        if (distance <= cutRange)
+        {
+            if (infoLogging != null)
+            {
+                infoLogging.SetActive(true);
+            }
+        }
+        else
+        {
+            if (infoLogging != null)
+            {
+                infoLogging.SetActive(false);
+            }
+        }
+    }
 
     public void TakeDamage()
     {
         int damage = Random.Range(minDamage, maxDamage + 1);
 
         treeHealth -= damage;
+
         foreach (var particle in cutParticles)
         {
             particle.Play();
@@ -45,6 +95,7 @@ public class CutTree : MonoBehaviour
 
         if (treeHealth <= 0)
         {
+            infoLogging.SetActive(false);
             CutDownTree();
         }
     }
@@ -53,6 +104,7 @@ public class CutTree : MonoBehaviour
     {
         normalTree.SetActive(false);
         cutTree.SetActive(true);
+
         int logAmount = Random.Range(
             minLogs,
             maxLogs + 1
