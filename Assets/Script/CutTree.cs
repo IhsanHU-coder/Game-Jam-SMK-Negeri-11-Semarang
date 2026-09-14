@@ -40,6 +40,10 @@ public class CutTree : MonoBehaviour
 
     private void Awake()
     {
+        // === TAMBAHAN ===
+        TreeTracker.RegisterTree();
+        // === akhir tambahan ===
+
         if (infoLogging != null)
         {
             if (Axe != null) Axe.SetActive(false);
@@ -172,6 +176,10 @@ public class CutTree : MonoBehaviour
                 rb.AddForce(randomForce, ForceMode.Impulse);
             }
         }
+
+        // === TAMBAHAN ===
+        TreeTracker.ReportTreeChopped();
+        // === akhir tambahan ===
 
         Destroy(gameObject);
     }

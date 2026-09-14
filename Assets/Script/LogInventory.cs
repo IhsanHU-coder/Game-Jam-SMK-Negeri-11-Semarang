@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class LogInventory : MonoBehaviour
@@ -9,6 +10,12 @@ public class LogInventory : MonoBehaviour
 
     public int CurrentLogs => currentLogs;
     public int MaxLogs => maxLogs;
+
+    /// <summary>
+    /// Dipanggil setiap kali currentLogs berubah (nambah atau di-reset ke 0).
+    /// Parameter int = jumlah log terbaru.
+    /// </summary>
+    public event Action<int> OnLogCountChanged;
 
     public bool IsFull()
     {
@@ -27,6 +34,10 @@ public class LogInventory : MonoBehaviour
 
         Debug.Log("Player Logs: " + currentLogs + "/" + maxLogs);
 
+        // === TAMBAHAN ===
+        OnLogCountChanged?.Invoke(currentLogs);
+        // === akhir tambahan ===
+
         return true;
     }
 
@@ -37,6 +48,10 @@ public class LogInventory : MonoBehaviour
         currentLogs = 0;
 
         Debug.Log("Player menyimpan " + logsToStore + " logs.");
+
+        // === TAMBAHAN ===
+        OnLogCountChanged?.Invoke(currentLogs);
+        // === akhir tambahan ===
 
         return logsToStore;
     }
