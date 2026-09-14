@@ -9,14 +9,20 @@ public class PlayerAttack : MonoBehaviour
     public InputManager inputManager;
     private Camera mainCamera;
 
+    public GameObject infoLogging;
+
     private void Awake()
     {
-        // inputManager = GetComponent<InputManager>();
         mainCamera = Camera.main;
+
+        if (infoLogging != null)
+            infoLogging.SetActive(false);
     }
 
     private void Update()
     {
+        CheckTreeRange();
+
         if (inputManager.AttackPressed)
         {
             Attack();
@@ -25,16 +31,45 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    private void CheckTreeRange()
+    {
+        // Cari semua Collider2D di sekitar Player
+        Collider2D[] hits = Physics2D.OverlapCircleAll(
+            transform.position,
+            attackRange
+        );
+
+        bool treeInRange = false;
+
+        foreach (Collider2D hit in hits)
+        {
+            CutTree tree = hit.GetComponentInParent<CutTree>();
+
+            if (tree != null)
+            {
+                treeInRange = true;
+                break;
+            }
+        }
+
+        // Nyalakan/matikan info
+        if (infoLogging != null)
+        {
+            infoLogging.SetActive(treeInRange);
+        }
+    }
+
     private void Attack()
     {
         if (Mouse.current == null)
             return;
 
-            if (mainCamera == null)
-        {
-        mainCamera = Camera.main;
         if (mainCamera == null)
-            return;
+        {
+            mainCamera = Camera.main;
+
+            if (mainCamera == null)
+                return;
         }
 
         Vector2 mousePosition = Mouse.current.position.ReadValue();
@@ -65,7 +100,7 @@ public class PlayerAttack : MonoBehaviour
         // Player benar-benar menebang pohon
         tree.TakeDamage();
 
-        // Baru camera shake
+        // Camera shake
         inputManager.PlayHitShake();
     }
 
